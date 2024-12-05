@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from video_summarizer import VideoSummarizer, AVAILABLE_MODELS
+from log_watchdog import monitor_log_for_pattern
 import asyncio
 
 app = Flask(__name__)
@@ -72,4 +73,8 @@ def request_entity_too_large(error):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+    log_path = "/content/cloudflared.log"
+    url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
+    asyncio.run(monitor_log_for_pattern(log_path, url_pattern))
+
     

@@ -2,8 +2,13 @@ import asyncio
 import re
 import os
 import aiofiles
-
+log_path = "/content/cloudflared.log"
+url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
 async def monitor_log_for_pattern(log_file_path: str, pattern: str):
+    if log_file_path == None:
+        log_file_path = log_path
+    if pattern == None:
+        pattern = url_pattern
     """
     Asynchronously monitors a log file for matches to a regex pattern.
     Prints the match to stdout once found.
