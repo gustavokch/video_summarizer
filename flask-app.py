@@ -72,9 +72,10 @@ def request_entity_too_large(error):
     }), 413
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
     log_path = "/content/cloudflared.log"
     url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
     asyncio.run(monitor_log_for_pattern(log_path, url_pattern))
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
 
     
