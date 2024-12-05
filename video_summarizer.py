@@ -25,6 +25,12 @@ class VideoSummarizer:
         self.download_dir = download_dir
         self.transcription_dir = transcription_dir
         self.summary_dir = summary_dir
+        gc.collect()
+        torch.cuda.empty_cache()
+        del self.model
+        del self.batched_model
+        gc.collect()
+        torch.cuda.empty_cache()
                     # Ensure CUDA is available
         self.device = "cuda"
         self.model_size = "large-v3"
@@ -36,6 +42,14 @@ class VideoSummarizer:
         for directory in [download_dir, transcription_dir, summary_dir]:
             os.makedirs(directory, exist_ok=True)
 
+    def clean_vram():
+        gc.collect()
+        torch.cuda.empty_cache()
+    #    del self.model
+    #    del self.batched_model
+        gc.collect()
+        torch.cuda.empty_cache()
+    
     def download_audio(self, youtube_url: str) -> str:
         """
         Download audio from a YouTube video
@@ -106,8 +120,11 @@ class VideoSummarizer:
             # model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
             # or run on CPU with INT8
             # model = WhisperModel(model_size, device="cpu", compute_type="int8")
+            del self.model
+            del self.batched_model
             gc.collect()
             torch.cuda.empty_cache()
+            clean_vram()
             segments, info = self.batched_model.transcribe(audio_file, batch_size=8)
 
             print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
@@ -137,6 +154,7 @@ class VideoSummarizer:
               del self.batched_model
               gc.collect()
               torch.cuda.empty_cache()
+              clean_vram()
               return transcription_file
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")
@@ -155,7 +173,11 @@ class VideoSummarizer:
         try:
             from subprocess import Popen, PIPE
             gc.collect()
-            torch.cuda.empty_cache()            
+            torch.cuda.empty_cache()
+            del self.model
+            del self.batched_model
+            gc.collect()
+            torch.cuda.empty_cache()          
             process = Popen(
                 ["ollama", "run", model_name], 
                 stdin=PIPE, stdout=PIPE, stderr=PIPE
