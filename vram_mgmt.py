@@ -6,13 +6,11 @@ import os
 def clean_vram():
     free_vram = get_gpu_memory()
     if free_vram < 8000:
-        clean_vram()
-    gc.collect()
-    torch.cuda.empty_cache()
-    #    del self.model
-    #    del self.batched_model
-    gc.collect()
-    torch.cuda.empty_cache()
+        gc.collect()
+        torch.cuda.empty_cache()
+        gc.collect()
+        torch.cuda.empty_cache()
+
 
 def get_gpu_memory():
     command = "nvidia-smi --query-gpu=memory.free --format=csv"

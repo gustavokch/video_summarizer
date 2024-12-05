@@ -140,6 +140,7 @@ class VideoSummarizer:
             torch.cuda.empty_cache()
             del self.model
             del self.batched_model
+            clean_vram()
             return transcription_file
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")
