@@ -30,11 +30,6 @@ class VideoSummarizer:
         for directory in [download_dir, transcription_dir, summary_dir]:
             os.makedirs(directory, exist_ok=True)
 
-        asyncio.create_task(monitor_ollama_serve())
-        log_path = "/content/cloudflared.log"
-        url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
-        asyncio.create_task(monitor_log_for_pattern(log_path, url_pattern))
-
     def download_audio(self, youtube_url: str) -> str:
         """
         Download audio from a YouTube video
