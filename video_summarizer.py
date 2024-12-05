@@ -217,6 +217,6 @@ class VideoSummarizer:
 # Available Ollama models
 AVAILABLE_MODELS = [
     "artifish/llama3.2-uncensored",
-    "qwen2.5:7b-instruct-q5_0",
+    "qwen2.5:7b-instruct-q4_K_M",
     "qwen-summarizer"
 ]
