@@ -30,16 +30,20 @@ class VideoSummarizer:
         torch.cuda.empty_cache()
         gc.collect()
         torch.cuda.empty_cache()
-                    # Ensure CUDA is available
-        self.device = "cuda"
-        self.model_size = "large-v3"
-
-            # Run on GPU with FP16
-        self.model = WhisperModel(self.model_size, device="cuda", compute_type="float16")
-        self.batched_model = BatchedInferencePipeline(model=self.model)
         # Create necessary directories
         for directory in [download_dir, transcription_dir, summary_dir]:
             os.makedirs(directory, exist_ok=True)
+
+
+    def load_model(self):   
+      # Ensure CUDA is available
+        del self.model
+        del self.batched_model
+        self.device = "cuda"
+        self.model_size = "large-v3"
+            # Run on GPU with FP16
+        self.model = WhisperModel(self.model_size, device="cuda", compute_type="float16")
+        self.batched_model = BatchedInferencePipeline(model=self.model)
 
     def download_audio(self, youtube_url: str) -> str:
         """
@@ -111,6 +115,7 @@ class VideoSummarizer:
             # model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
             # or run on CPU with INT8
             # model = WhisperModel(model_size, device="cpu", compute_type="int8")
+            self.load_model()
             gc.collect()
             torch.cuda.empty_cache()
             clean_vram()
@@ -121,8 +126,6 @@ class VideoSummarizer:
             if os.path.isfile(transcription_file):
               gc.collect()
               torch.cuda.empty_cache()
-              del self.model
-              del self.batched_model
               gc.collect()
               torch.cuda.empty_cache()
               return transcription_file
@@ -139,6 +142,8 @@ class VideoSummarizer:
               #    f.write(result)
               gc.collect()
               torch.cuda.empty_cache()
+              del self.model
+              del self.batched_model
               return transcription_file
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")

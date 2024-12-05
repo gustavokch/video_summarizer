@@ -21,4 +21,6 @@ def get_gpu_memory():
     return int(memory_free_values[0])
 
 
+
+
         
