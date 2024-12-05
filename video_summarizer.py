@@ -94,7 +94,7 @@ class VideoSummarizer:
         """
         try:
             # Ensure CUDA is available
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            device = "cuda"
             model_size = "large-v3"
 
             # Run on GPU with FP16
@@ -111,10 +111,10 @@ class VideoSummarizer:
 
             for segment in segments:
                 print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
-            result = str(list(segments))
+            segments = list(segments)
             # Output file path
             transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
-            
+            result = str(segments)
             # Save the transcription to a text file
             with open(transcription_file, 'w') as f:
                 f.write(result)
