@@ -29,7 +29,7 @@ def index():
                 }), 400
 
             # Initialize VideoSummarizer
-            summarizer = VideoSummarizer()
+#            summarizer = VideoSummarizer()
 
             # Process the video
             transcription_file, summary = summarizer.process_video(
@@ -71,7 +71,6 @@ def request_entity_too_large(error):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
 
 
     
