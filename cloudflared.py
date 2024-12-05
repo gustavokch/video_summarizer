@@ -57,7 +57,7 @@ def start_cloudflared():
 
 # Run the function
 if __name__ == '__main__':
-    if os.environ.get('CLOUDFLARED_INSTALLED') == 0: 
+    if os.environ.get('CLOUDFLARED_INSTALLED') == None: 
         install_cloudflared()
         start_cloudflared()
     else:
