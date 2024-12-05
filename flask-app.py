@@ -3,8 +3,7 @@ import asyncio
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from video_summarizer import VideoSummarizer, AVAILABLE_MODELS
-from ollama_server import monitor_ollama_serve
-from log_watchdog import monitor_log_for_pattern
+
 
 summarizer = VideoSummarizer()
 app = Flask(__name__)
@@ -33,10 +32,7 @@ def index():
 
             # Initialize VideoSummarizer
             summarizer = VideoSummarizer()
-            asyncio.create_task(monitor_ollama_serve())
-            log_path = "/content/cloudflared.log"
-            url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
-            asyncio.create_task(monitor_log_for_pattern(log_path, url_pattern))
+
             # Process the video
             transcription_file, summary = summarizer.process_video(
                 video_url, 
