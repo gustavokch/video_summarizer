@@ -3,7 +3,7 @@ asyncio
 flask
 yt-dlp
 werkzeug
-
+aiofiles
 # Optional dependencies for advanced functionality
 requests
 typing-extensions
