@@ -1,6 +1,16 @@
 import time
 import re
 import os
+LOG_FILE = "/content/cloudflared_url.txt"
+def log_message(message):
+    """
+    Logs a message to the log file with a timestamp.
+
+    :param message: The message to log.
+    """
+    with open(LOG_FILE, "a") as f:
+        f.write(f"{message}\n")
+
 
 def monitor_log_for_pattern(log_file_path: str, pattern: str):
     if log_file_path is None:
@@ -31,6 +41,7 @@ def monitor_log_for_pattern(log_file_path: str, pattern: str):
                     match = re.search(pattern, line)
                     if match:
                         print(f"\033[1;33mCloudflared Tunnel URL: {match.group(0)}\033[0m")
+                        log_message({match.group(0)})
                         return {match.group(0)}  # Stop monitoring once a match is found
                 last_position = log_file.tell()  # Update the last read position
         except FileNotFoundError:

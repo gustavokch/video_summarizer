@@ -58,12 +58,14 @@ def start_cloudflared():
 # Run the function
 if __name__ == '__main__':
     var = os.environ.get('CLOUDFLARED_INSTALLED')
-    print(str(var))
-    if os.environ.get('CLOUDFLARED_INSTALLED') == None: 
+    print('CLOUDFLARED_INSTALLED='+str(var))
+    if var == "1":
+        start_cloudflared()
+    elif var == None: 
         install_cloudflared()
         start_cloudflared()
-    elif os.environ.get('CLOUDFLARED_INSTALLED') == 0:
+    elif var == "0":
         install_cloudflared()
         start_cloudflared()        
-    else:
-        start_cloudflared()
+
+

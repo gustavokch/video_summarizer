@@ -2,9 +2,7 @@ import os
 import subprocess
 from typing import Tuple, Optional
 import yt_dlp
-import asyncio
-from ollama_server import monitor_ollama_serve
-from log_watchdog import monitor_log_for_pattern
+
 
 class VideoSummarizer:
     """

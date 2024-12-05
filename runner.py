@@ -1,26 +1,52 @@
-import asyncio
-import os
 import subprocess
-from ollama_server import monitor_ollama_serve
-from log_watchdog import monitor_log_for_pattern
-from app import app
+import sys
+import time
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
 
-async def run_app():
-    loop = asyncio.get_event_loop()
-    # Run app.run in a separate thread as it is a blocking operation
-    await loop.run_in_executor(None, app.run, None, True, '0.0.0.0', 5000)
+# Function to start a script without stdout
+def run_script_no_stdout(script_name):
+    return subprocess.Popen(['python', script_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-async def main():
-    # Run monitor_ollama_serve and app.run concurrently
-    ollama_task = asyncio.create_task(monitor_ollama_serve())
-    app_task = asyncio.create_task(run_app())
-    
-    # Wait for app.run to start before running monitor_log_for_pattern
-    await asyncio.sleep(5)
-    log_task = asyncio.create_task(monitor_log_for_pattern())
-    
-    # Wait for all tasks to complete
-    await asyncio.gather(ollama_task, app_task, log_task)
+# Function to start a script with stdout
+def run_script_with_stdout(script_name):
+    return subprocess.Popen(['python', script_name])
+
+# Watchdog event handler to monitor changes in the cloudflared_url.txt file
+class FileChangeHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        if event.src_path == '/content/cloudflared_url.txt':
+            with open('/content/cloudflared_url.txt', 'r') as file:
+                print(file.read())
+
+# Setup and start the watchdog observer
+def start_file_watcher():
+    event_handler = FileChangeHandler()
+    observer = Observer()
+    observer.schedule(event_handler, path='/content', recursive=False)
+    observer.start()
+    return observer
+
+def main():
+    # Run the scripts in parallel
+    p1 = run_script_no_stdout('ollama_server.py')  # No stdout for this script
+    p2 = run_script_no_stdout('log_watchdog.py')  # No stdout for this script
+    p3 = run_script_with_stdout('app.py')  # With stdout for this script
+
+    # Start the file watcher for cloudflared_url.txt
+    observer = start_file_watcher()
+
+    try:
+        # Keep the main script running to handle processes and file monitoring
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        print("Terminating scripts...")
+        p1.terminate()
+        p2.terminate()
+        p3.terminate()
+        observer.stop()
+        observer.join()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()

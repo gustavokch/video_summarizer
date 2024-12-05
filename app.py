@@ -1,5 +1,4 @@
 import os
-import asyncio
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from video_summarizer import VideoSummarizer, AVAILABLE_MODELS

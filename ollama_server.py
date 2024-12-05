@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 from threading import Thread
 
-LOG_FILE = "ollama_serve.log"
+LOG_FILE = "/content/ollama_serve.log"
 
 def monitor_ollama_serve():
     """
