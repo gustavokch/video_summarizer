@@ -33,10 +33,10 @@ def index():
 
             # Initialize VideoSummarizer
             summarizer = VideoSummarizer()
-            monitor_ollama_serve()
+            asyncio.run(monitor_ollama_serve())
             log_path = "/content/cloudflared.log"
             url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
-            monitor_log_for_pattern(log_path, url_pattern)
+            asyncio.run(monitor_log_for_pattern(log_path, url_pattern))
             # Process the video
             transcription_file, summary = summarizer.process_video(
                 video_url, 
