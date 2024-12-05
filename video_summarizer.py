@@ -111,8 +111,6 @@ class VideoSummarizer:
             # model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
             # or run on CPU with INT8
             # model = WhisperModel(model_size, device="cpu", compute_type="int8")
-            del self.model
-            del self.batched_model
             gc.collect()
             torch.cuda.empty_cache()
             clean_vram()
