@@ -71,8 +71,9 @@ class VideoSummarizer:
                 info = ydl.extract_info(youtube_url, download=True)
                 audio_file = ydl.prepare_filename(info)
                 audio_file = os.path.splitext(audio_file)[0] + '.opus'
-            
-            return audio_file
+                original_language = info.get('original_audio_language', 'Unknown')
+                print("ORIGINAL LANGUAGE: "+str(original_language))
+            return audio_file, original_language
         except Exception as e:
             raise Exception(f"Failed to download audio: {e}")
     
@@ -125,11 +126,14 @@ class VideoSummarizer:
             torch.cuda.empty_cache()
             gc.collect()
             torch.cuda.empty_cache()
-
+            summarize_timestamps = False
             with open(transcription_file, 'w') as f:    
                 for segment in segments:
-                    print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))          
-                    f.write(segment.text + '\n')
+                    print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+                    if summarize_timestamps == True:  
+                        f.write("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text)+ '\n')
+                    else:        
+                        f.write(segment.text + '\n')
             segments = list(segments)
               # Output file path
               #result = str(segments)
