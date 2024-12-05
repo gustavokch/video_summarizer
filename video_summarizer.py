@@ -1,11 +1,13 @@
 import os
 import subprocess
+import ollama
 from typing import Tuple, Optional
 import yt_dlp
 import gc
 import torch
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from vram_mgmt import clean_vram
+from templates import generate_modelfile, create_model_from_file
 
 class VideoSummarizer:
     """
@@ -30,6 +32,11 @@ class VideoSummarizer:
         torch.cuda.empty_cache()
         gc.collect()
         torch.cuda.empty_cache()
+        model_list = ollama.list()
+        for model_n in model_list:
+            generate_modelfile(model_n)
+            create_model_from_file(model_n)
+
         # Create necessary directories
         for directory in [download_dir, transcription_dir, summary_dir]:
             os.makedirs(directory, exist_ok=True)
@@ -73,7 +80,7 @@ class VideoSummarizer:
                 audio_file = os.path.splitext(audio_file)[0] + '.opus'
                 original_language = info.get('original_audio_language', 'Unknown')
                 print("ORIGINAL LANGUAGE: "+str(original_language))
-            return audio_file, original_language
+            return audio_file
         except Exception as e:
             raise Exception(f"Failed to download audio: {e}")
     
@@ -149,38 +156,118 @@ class VideoSummarizer:
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")
     
-    def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
-        """
-        Summarize text using Ollama
+def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
+    """
+    Summarize text using Ollama
+    
+    Args:
+        input_text (str): Text to summarize
+        model_name (str): Ollama model to use for summarization
+    
+    Returns:
+        str: Generated summary
+    """
+    try:
+        # Optional: Clean up GPU memory if applicable
+        clean_vram()
+        gc.collect()
+        torch.cuda.empty_cache()
+        gc.collect()
+        torch.cuda.empty_cache()
+
+        # Use Ollama's Python API to generate the summary
+        client = ollama.Client(model=model_name)
+        response = client.generate(prompt=input_text)
         
-        Args:
-            input_text (str): Text to summarize
-            model_name (str): Ollama model to use for summarization
+        if not response or not response['text']:
+            raise Exception("No response from Ollama API.")
+
+        summary = response['text'].strip()
+
+        # Save the summary to a file
+        summary_file = os.path.join(self.summary_dir, 'summary.txt')
+        with open(summary_file, "w") as f:
+            f.write(summary)
         
-        Returns:
-            str: Generated summary
-        """
-        try:
-            from subprocess import Popen, PIPE
-            clean_vram()
-            gc.collect()
-            torch.cuda.empty_cache()
-            gc.collect()
-            torch.cuda.empty_cache()          
-            process = Popen(
-                ["ollama", "run", model_name], 
-                stdin=PIPE, stdout=PIPE, stderr=PIPE
-            )
-            stdout, stderr = process.communicate(input=input_text.encode())
-            summary = stdout.decode("utf-8").strip()
-            
-            summary_file = os.path.join(self.summary_dir, 'summary.txt')
-            with open(summary_file, "w") as f:
-                f.write(summary)
-            
-            return summary
-        except Exception as e:
-            raise Exception(f"Summarization failed: {e}")
+        return summary
+    except Exception as e:
+        raise Exception(f"Summarization failed: {e}")
+def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
+    """
+    Summarize text using Ollama
+    
+    Args:
+        input_text (str): Text to summarize
+        model_name (str): Ollama model to use for summarization
+    
+    Returns:
+        str: Generated summary
+    """
+    try:
+        import ollama  # Ensure the Ollama Python bindings are installed
+
+        # Optional: Clean up GPU memory if applicable
+        clean_vram()
+        gc.collect()
+        torch.cuda.empty_cache()
+        gc.collect()
+        torch.cuda.empty_cache()
+
+        # Use Ollama's Python API to generate the summary
+        client = ollama.Client(model=model_name)
+        response = client.generate(prompt=input_text)
+        
+        if not response or not response['text']:
+            raise Exception("No response from Ollama API.")
+
+        summary = response['text'].strip()
+
+        # Save the summary to a file
+        summary_file = os.path.join(self.summary_dir, 'summary.txt')
+        with open(summary_file, "w") as f:
+            f.write(summary)
+        
+        return summary
+    except Exception as e:
+        raise Exception(f"Summarization failed: {e}")
+def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
+    """
+    Summarize text using Ollama
+    
+    Args:
+        input_text (str): Text to summarize
+        model_name (str): Ollama model to use for summarization
+    
+    Returns:
+        str: Generated summary
+    """
+    try:
+
+        # Optional: Clean up GPU memory if applicable
+        clean_vram()
+        gc.collect()
+        torch.cuda.empty_cache()
+        gc.collect()
+        torch.cuda.empty_cache()
+
+        # Use Ollama's Python API to generate the summary
+        client = ollama.Client(model=model_name)
+        response = client.generate(prompt=input_text)
+        
+        if not response or not response['text']:
+            raise Exception("No response from Ollama API.")
+
+        summary = response['text'].strip()
+
+        # Save the summary to a file
+        summary_file = os.path.join(self.summary_dir, 'summary.txt')
+        with open(summary_file, "w") as f:
+            f.write(summary)
+        
+        return summary
+    except Exception as e:
+        raise Exception(f"Summarization failed: {e}")
+
     
     def process_video(self, video_url: str, model_name: str) -> Tuple[str, str]:
         """

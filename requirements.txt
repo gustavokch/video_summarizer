@@ -1,4 +1,5 @@
 # Core dependencies
+ollama
 asyncio
 flask
 yt-dlp

@@ -8,8 +8,9 @@ from watchdog.events import FileSystemEventHandler
 # Function to start a script without stdout
 def run_script_no_stdout(script_name):
     if script_name == 'cloudflared.py':
-      log = open('/content/cloudflared.log', 'a')  # so that data written to it will be appended
-      return subprocess.Popen(['python', script_name],stdout=log, stderr=log)
+      if os.path.isfile("/content/cloudflared.log"):
+        log = open('/content/cloudflared.log', 'a')  # so that data written to it will be appended
+        return subprocess.Popen(['python', script_name],stdout=log, stderr=log)
     else:
       return subprocess.Popen(['python', script_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
