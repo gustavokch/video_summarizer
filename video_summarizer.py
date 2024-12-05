@@ -115,10 +115,10 @@ class VideoSummarizer:
             # model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
             # or run on CPU with INT8
             # model = WhisperModel(model_size, device="cpu", compute_type="int8")
-            self.load_model()
             gc.collect()
             torch.cuda.empty_cache()
             clean_vram()
+            self.load_model()
             segments, info = self.batched_model.transcribe(audio_file, batch_size=8)
 
             print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
