@@ -124,6 +124,9 @@ class VideoSummarizer:
             gc.collect()
             torch.cuda.empty_cache()
             del self.model
+            del self.batched_model
+            gc.collect()
+            torch.cuda.empty_cache()
             return transcription_file
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")
@@ -177,7 +180,8 @@ class VideoSummarizer:
             
             # Transcribe
             transcription_file = self.transcribe_audio(wav_file)
-            
+            gc.collect()
+            torch.cuda.empty_cache()            
             # Read transcription
             with open(transcription_file, "r") as f:
                 transcription_text = f.read()

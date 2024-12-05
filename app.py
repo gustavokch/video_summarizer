@@ -3,7 +3,6 @@ from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from video_summarizer import VideoSummarizer, AVAILABLE_MODELS
 
-
 summarizer = VideoSummarizer()
 app = Flask(__name__)
 
