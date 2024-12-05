@@ -159,8 +159,6 @@ class VideoSummarizer:
             clean_vram()
             gc.collect()
             torch.cuda.empty_cache()
-            del self.model
-            del self.batched_model
             gc.collect()
             torch.cuda.empty_cache()          
             process = Popen(
