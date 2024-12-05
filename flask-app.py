@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from video_summarizer import VideoSummarizer, AVAILABLE_MODELS
-
+import asyncio
 
 app = Flask(__name__)
 
@@ -30,7 +30,7 @@ def index():
 
             # Initialize VideoSummarizer
             summarizer = VideoSummarizer()
-            summarizer.ollama_server()
+            asyncio.run(VideoSummarizer.ollama_server())
 
             # Process the video
             transcription_file, summary = summarizer.process_video(
@@ -72,4 +72,4 @@ def request_entity_too_large(error):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-    VideoSummarizer.ollama_server()
+    
