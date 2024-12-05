@@ -3,12 +3,14 @@ from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from video_summarizer import VideoSummarizer, AVAILABLE_MODELS
 
+
 app = Flask(__name__)
 
 # Configuration
 app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB max file size
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -28,6 +30,7 @@ def index():
 
             # Initialize VideoSummarizer
             summarizer = VideoSummarizer()
+            summarizer.ollama_server()
 
             # Process the video
             transcription_file, summary = summarizer.process_video(

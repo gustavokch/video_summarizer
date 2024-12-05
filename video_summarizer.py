@@ -2,6 +2,8 @@ import os
 import subprocess
 from typing import Tuple, Optional
 import yt_dlp
+import asyncio
+from ollama_monitor import monitor_ollama_serve
 
 class VideoSummarizer:
     """
@@ -170,6 +172,10 @@ class VideoSummarizer:
         
         except Exception as e:
             raise Exception(f"Video processing failed: {e}")
+        
+    async def ollama_server():
+        # Call the monitor function
+        await monitor_ollama_serve()
 
 # Available Ollama models
 AVAILABLE_MODELS = [
