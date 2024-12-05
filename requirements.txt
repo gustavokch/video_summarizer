@@ -4,6 +4,10 @@ flask
 yt-dlp
 werkzeug
 aiofiles
+whisperx
+torch
+torchvision
+torchaudio
 # Optional dependencies for advanced functionality
 requests
 typing-extensions

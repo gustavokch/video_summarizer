@@ -84,7 +84,7 @@ class VideoSummarizer:
     
     def transcribe_audio(self, audio_file: str) -> str:
         """
-        Transcribe audio using whisper.cpp
+        Transcribe audio using WhisperX on CUDA
         
         Args:
             audio_file (str): Path to audio file to transcribe
@@ -93,18 +93,21 @@ class VideoSummarizer:
             str: Path to transcription file
         """
         try:
-            transcription_file = os.path.join(
-                self.transcription_dir, 
-                os.path.basename(audio_file) + '.txt'
-            )
+            # Ensure CUDA is available
+            device = "cuda" if torch.cuda.is_available() else "cpu"
             
-            subprocess.run([
-                "/content/whisper.cpp/main", 
-                "--model", "/content/whisper.cpp/models/ggml-large-v3-turbo.bin", 
-                "--output-txt",
-                "-of", os.path.join(self.transcription_dir, os.path.basename(audio_file)),
-                "--file", audio_file
-            ], check=True)
+            # Load the WhisperX model
+            model = whisperx.load_model("large-v3", device=device)
+
+            # Transcribe the audio
+            result = model.transcribe(audio_file)
+
+            # Output file path
+            transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
+            
+            # Save the transcription to a text file
+            with open(transcription_file, 'w') as f:
+                f.write(result['text'])
             
             return transcription_file
         except Exception as e:
