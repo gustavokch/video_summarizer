@@ -3,7 +3,6 @@ import subprocess
 from typing import Tuple, Optional
 import yt_dlp
 import asyncio
-from ollama_monitor import monitor_ollama_serve
 
 class VideoSummarizer:
     """
