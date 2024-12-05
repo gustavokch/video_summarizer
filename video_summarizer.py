@@ -46,7 +46,7 @@ class VideoSummarizer:
                 'outtmpl': f'{self.download_dir}/%(title)s.%(ext)s',
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
+                    'preferredcodec': 'opus',
                     'preferredquality': '192',
                 }],
             }
@@ -54,7 +54,7 @@ class VideoSummarizer:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(youtube_url, download=True)
                 audio_file = ydl.prepare_filename(info)
-                audio_file = os.path.splitext(audio_file)[0] + '.mp3'
+                audio_file = os.path.splitext(audio_file)[0] + '.opus'
             
             return audio_file
         except Exception as e:
@@ -75,7 +75,7 @@ class VideoSummarizer:
             output_file = os.path.splitext(input_file)[0] + '_16khz.wav'
         
         command = [
-            'ffmpeg', '-i', input_file, '-ar', '16000', '-ac', '1', output_file
+            'ffmpeg', '-y', '-i', input_file, '-ar', '16000', '-ac', '1', output_file
         ]
         subprocess.run(command, check=True)
         
