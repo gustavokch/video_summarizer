@@ -37,8 +37,6 @@ class VideoSummarizer:
 
     def load_model(self):   
       # Ensure CUDA is available
-        del self.model
-        del self.batched_model
         self.device = "cuda"
         self.model_size = "large-v3"
             # Run on GPU with FP16
