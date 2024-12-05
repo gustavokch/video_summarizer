@@ -28,7 +28,7 @@ class VideoSummarizer:
         # Create necessary directories
         for directory in [download_dir, transcription_dir, summary_dir]:
             os.makedirs(directory, exist_ok=True)
-    
+
     def download_audio(self, youtube_url: str) -> str:
         """
         Download audio from a YouTube video
@@ -176,6 +176,8 @@ class VideoSummarizer:
     async def ollama_server():
         # Call the monitor function
         await monitor_ollama_serve()
+
+asyncio.run(monitor_ollama_serve())
 
 # Available Ollama models
 AVAILABLE_MODELS = [
