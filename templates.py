@@ -1,5 +1,16 @@
 import os
 import subprocess
+import ollama
+from dotenv import load_dotenv
+import os
+
+# Load .env file
+load_dotenv('./env')
+
+# Access variables directly from environment
+temperature = float(os.getenv('TEMPERATURE'))
+num_ctx = int(os.getenv('NUM_CTX'))
+num_predict = int(os.getenv('NUM_PREDICT'))
 
 system_message_l = ["You are an advanced language model specialized in text summarization. Your task is to process transcribed videos and produce extensive and comprehensive summaries. Follow these guidelines:",
 "1. **Context Preservation:** Accurately capture the key points, nuances, and tone of the original content. Maintain the original intent and message of the speaker(s).",
@@ -10,25 +21,53 @@ system_message_l = ["You are an advanced language model specialized in text summ
 "6. **Formatting:** Use line breaks, bullet points, numbered lists, or subheadings as appropriate to enhance readability and comprehension.",
 "7. **Neutrality:** Remain objective and avoid introducing any bias or personal interpretations.",
 "Produce a well-rounded and exhaustive summary that provides the reader with a deep understanding of the video content without the need to refer to the original transcript."]
+
 def gen_string(line_list): 
     for n in line_list:
         out_string = ("\n".join(str(n) for n in line_list) + "\n")
     return out_string
 sys_message = gen_string(system_message_l)
 
-def generate_modelfile(model_name, temperature):
-    model_file = f"./modelfiles/Modelfile-{model_name}"       
-    with open (model_file,mode = "w") as Modelfile:
-        Modelfile.write("FROM "+{model_name}+ "\n")
+def generate_modelfile(model_name, model_family):
+    if not os.path.isdir("./modelfiles"):
+        os.makedirs("./modelfiles")        
+    model_file = f"./modelfiles/Modelfile-{model_family}"
+    if os.path.isfile(model_file):
+        os.remove(model_file)       
+    with open(model_file,mode = "a") as Modelfile:
+        Modelfile.write("FROM "+str(f"{model_name}")+ "\n")
         Modelfile.write("PARAMETER temperature "+ str(temperature)+ "\n")
-        Modelfile.write("PARAMETER num_ctx 4096"+ "\n")
-        Modelfile.write("PARAMETER num_predict 2048"+ "\n")
+        Modelfile.write("PARAMETER num_ctx "+str(num_ctx)+ "\n")
+        Modelfile.write("PARAMETER num_predict "+str(num_predict)+ "\n")
         Modelfile.write('SYSTEM """'+"\n")
-        Modelfile.write(sys_message+"\n")
+        Modelfile.write(sys_message)
         Modelfile.write('"""')
     print("Created modelfile for "+model_name)
 
-def create_model_from_file(model_name):
-    subprocess.Popen(['ollama', 'create', f"{model_name}-summarizer", '-f', ],stdout=None, stderr=None)
+def create_model_from_file(model_name,model_family):
+    model_file = str(f"./modelfiles/Modelfile-{model_family}")
+    subprocess.Popen(['ollama', 'create', f"{model_name}-summarizer", '-f', f"{model_file}"],stdout=None, stderr=None)
     print("Added model "+f"{model_name}-summarizer"+" to ollama!")
 
+def gen_ollama_models():
+    """
+    Retrieve and print the list of available Ollama models.
+    """
+    try:
+        # Fetch the list of local models
+        models = ollama.list()
+        for model in models['models']:
+            model_n = str(f"{model['model']}")
+            model_f = str(f"{model['details'].family}")
+            generate_modelfile(model_n, model_f)
+            create_model_from_file(model_n, model_f)
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+if __name__ == '__main__':
+    #model_list = ollama.models()
+    #for model_n in model_list:
+   #     generate_modelfile(model_n)
+    #    create_model_from_file(model_n)
+    gen_ollama_models()

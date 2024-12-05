@@ -16,7 +16,8 @@ class VideoSummarizer:
     def __init__(self, 
                  download_dir="/tmp/video_downloads", 
                  transcription_dir="/tmp/transcriptions", 
-                 summary_dir="/tmp/summaries"):
+                 summary_dir="/tmp/summaries",
+                 modelfile_dir="./modelfiles"):
         """
         Initialize directories for downloads, transcriptions, and summaries
         
@@ -28,17 +29,13 @@ class VideoSummarizer:
         self.download_dir = download_dir
         self.transcription_dir = transcription_dir
         self.summary_dir = summary_dir
+        self.modelfile_dir = modelfile_dir
         gc.collect()
         torch.cuda.empty_cache()
         gc.collect()
         torch.cuda.empty_cache()
-        model_list = ollama.list()
-        for model_n in model_list:
-            generate_modelfile(model_n)
-            create_model_from_file(model_n)
-
         # Create necessary directories
-        for directory in [download_dir, transcription_dir, summary_dir]:
+        for directory in [download_dir, transcription_dir, summary_dir, modelfile_dir]:
             os.makedirs(directory, exist_ok=True)
 
 
@@ -174,7 +171,7 @@ def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-u
         torch.cuda.empty_cache()
         gc.collect()
         torch.cuda.empty_cache()
-
+        
         # Use Ollama's Python API to generate the summary
         client = ollama.Client(model=model_name)
         response = client.generate(prompt=input_text)
@@ -192,44 +189,7 @@ def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-u
         return summary
     except Exception as e:
         raise Exception(f"Summarization failed: {e}")
-def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
-    """
-    Summarize text using Ollama
-    
-    Args:
-        input_text (str): Text to summarize
-        model_name (str): Ollama model to use for summarization
-    
-    Returns:
-        str: Generated summary
-    """
-    try:
-        import ollama  # Ensure the Ollama Python bindings are installed
 
-        # Optional: Clean up GPU memory if applicable
-        clean_vram()
-        gc.collect()
-        torch.cuda.empty_cache()
-        gc.collect()
-        torch.cuda.empty_cache()
-
-        # Use Ollama's Python API to generate the summary
-        client = ollama.Client(model=model_name)
-        response = client.generate(prompt=input_text)
-        
-        if not response or not response['text']:
-            raise Exception("No response from Ollama API.")
-
-        summary = response['text'].strip()
-
-        # Save the summary to a file
-        summary_file = os.path.join(self.summary_dir, 'summary.txt')
-        with open(summary_file, "w") as f:
-            f.write(summary)
-        
-        return summary
-    except Exception as e:
-        raise Exception(f"Summarization failed: {e}")
 def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
     """
     Summarize text using Ollama
@@ -269,7 +229,7 @@ def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-u
         raise Exception(f"Summarization failed: {e}")
 
     
-    def process_video(self, video_url: str, model_name: str) -> Tuple[str, str]:
+def process_video(self, video_url: str, model_name: str) -> Tuple[str, str]:
         """
         Comprehensive method to process a video from URL to summary
         

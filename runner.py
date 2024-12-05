@@ -4,6 +4,7 @@ import sys
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from templates import gen_ollama_models
 
 # Function to start a script without stdout
 def run_script_no_stdout(script_name):
@@ -46,7 +47,8 @@ def main():
     p2 = run_script_no_stdout('log_watchdog.py')  # No stdout for this script
     p3 = run_script_with_stdout('app.py')  # With stdout for this script
     p4 = run_script_no_stdout('cloudflared.py')
-
+    p5 = run_script_with_stdout('templates.py')
+    
     # Start the file watcher for cloudflared_url.txt
     observer = start_file_watcher()
 

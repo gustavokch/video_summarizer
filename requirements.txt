@@ -11,6 +11,7 @@ torchvision
 torchaudio
 watchdog
 ctranslate2==4.4.0
+python-dotenv
 # Optional dependencies for advanced functionality
 requests
 typing-extensions
