@@ -5,6 +5,7 @@ import yt_dlp
 import gc
 import torch
 from faster_whisper import WhisperModel, BatchedInferencePipeline
+from vram_mgmt import clean_vram
 
 class VideoSummarizer:
     """
@@ -40,14 +41,6 @@ class VideoSummarizer:
         for directory in [download_dir, transcription_dir, summary_dir]:
             os.makedirs(directory, exist_ok=True)
 
-    def clean_vram():
-        gc.collect()
-        torch.cuda.empty_cache()
-    #    del self.model
-    #    del self.batched_model
-        gc.collect()
-        torch.cuda.empty_cache()
-    
     def download_audio(self, youtube_url: str) -> str:
         """
         Download audio from a YouTube video
