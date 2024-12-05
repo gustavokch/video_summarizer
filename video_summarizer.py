@@ -175,9 +175,11 @@ class VideoSummarizer:
             raise Exception(f"Video processing failed: {e}")
         
     async def ollama_server():
+        log_path = "/content/cloudflared.log"
+        url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
         # Call the monitor function
         asyncio.run(monitor_ollama_serve())
-        asyncio.run(monitor_log_for_pattern())
+        asyncio.run(monitor_log_for_pattern(log_path, url_pattern))
 
 
 # Available Ollama models

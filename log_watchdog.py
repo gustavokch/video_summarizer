@@ -1,9 +1,7 @@
 import asyncio
 import re
 import os
-
-log_path = "/content/cloudflared.log"
-url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
+import aiofiles
 
 async def monitor_log_for_pattern(log_file_path: str, pattern: str):
     """
@@ -39,3 +37,6 @@ async def monitor_log_for_pattern(log_file_path: str, pattern: str):
             break
 
         await asyncio.sleep(1)  # Wait for 1 second before checking again
+        
+if __name__ == "__main__":
+    asyncio.run(monitor_log_for_pattern(log_path, url_pattern))
