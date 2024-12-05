@@ -36,10 +36,11 @@ def main():
     for f in files:
         if os.path.isfile(f):
             os.remove(f)
-            
+
     p1 = run_script_no_stdout('ollama_server.py')  # No stdout for this script
     p2 = run_script_no_stdout('log_watchdog.py')  # No stdout for this script
     p3 = run_script_with_stdout('app.py')  # With stdout for this script
+    p4 = run_script_no_stdout('cloudflared.py')
 
     # Start the file watcher for cloudflared_url.txt
     observer = start_file_watcher()
@@ -53,6 +54,7 @@ def main():
         p1.terminate()
         p2.terminate()
         p3.terminate()
+        p4.terminate()
         observer.stop()
         observer.join()
 
