@@ -1,6 +1,7 @@
 import subprocess
+import os
 
-def setup_and_start_cloudflared():
+def install_cloudflared():
     try:
         # Add Cloudflare GPG key
         print("Adding Cloudflare GPG key...")
@@ -30,6 +31,15 @@ def setup_and_start_cloudflared():
             shell=True,
             check=True
         )
+        os.environ["CLOUDFLARED_INSTALLED"] = "1"
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
+        return False
+
+    return True
+
+def start_cloudflared():
+    try:
         
         # Start the cloudflared tunnel on port 5000
         print("Starting cloudflared tunnel on port 5000...")
@@ -46,4 +56,9 @@ def setup_and_start_cloudflared():
     return True
 
 # Run the function
-setup_and_start_cloudflared()
+if __name__ == '__main__':
+    if os.environ.get('CLOUDFLARED_INSTALLED') == 0: 
+        install_cloudflared()
+        start_cloudflared()
+    else:
+        start_cloudflared()
