@@ -29,7 +29,7 @@ class VideoSummarizer:
 
             # Run on GPU with FP16
         self.model = WhisperModel(self.model_size, device="cuda", compute_type="float16")
-        self.batched_model = BatchedInferencePipeline(model=model)
+        self.batched_model = BatchedInferencePipeline(model=self.model)
         # Create necessary directories
         for directory in [download_dir, transcription_dir, summary_dir]:
             os.makedirs(directory, exist_ok=True)
