@@ -121,28 +121,26 @@ class VideoSummarizer:
 
             print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
             transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
-            if os.path.isfile(transcription_file):
-              gc.collect()
-              torch.cuda.empty_cache()
-              gc.collect()
-              torch.cuda.empty_cache()
-              return transcription_file
-            else:
-              with open(transcription_file, 'w') as f:    
-                  for segment in segments:
-                      print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))          
-                      f.write(segment.text + '\n')
-              segments = list(segments)
+            gc.collect()
+            torch.cuda.empty_cache()
+            gc.collect()
+            torch.cuda.empty_cache()
+
+            with open(transcription_file, 'w') as f:    
+                for segment in segments:
+                    print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))          
+                    f.write(segment.text + '\n')
+            segments = list(segments)
               # Output file path
               #result = str(segments)
               # Save the transcription to a text file
               #with open(transcription_file, 'w') as f:
               #    f.write(result)
-              gc.collect()
-              torch.cuda.empty_cache()
-              del self.model
-              del self.batched_model
-              return transcription_file
+            gc.collect()
+            torch.cuda.empty_cache()
+            del self.model
+            del self.batched_model
+            return transcription_file
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")
     
