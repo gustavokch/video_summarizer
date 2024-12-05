@@ -58,6 +58,8 @@ def gen_ollama_models():
     Retrieve and print the list of available Ollama models.
     """
     try:
+        with open("./models.txt", "w") as file:
+            file.close()
         # Fetch the list of local models
         models = ollama.list()
         for model in models['models']:
