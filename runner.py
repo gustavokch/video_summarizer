@@ -21,10 +21,9 @@ async def run_app():
     check=True
         )
 
-async def main():
-
+def main():
     asyncio.run(run_app())   
     asyncio.run(ollama_server())
     asyncio.run(log_watcher())
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
