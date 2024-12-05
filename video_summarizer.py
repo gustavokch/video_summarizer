@@ -2,6 +2,7 @@ import os
 import subprocess
 from typing import Tuple, Optional
 import yt_dlp
+import gc
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 
 class VideoSummarizer:
@@ -119,7 +120,9 @@ class VideoSummarizer:
             # Save the transcription to a text file
             #with open(transcription_file, 'w') as f:
             #    f.write(result)
-            
+            gc.collect()
+            torch.cuda.empty_cache()
+            del self.model
             return transcription_file
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")
