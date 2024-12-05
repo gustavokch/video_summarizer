@@ -96,12 +96,15 @@ class VideoSummarizer:
         try:
             # Ensure CUDA is available
             device = "cuda" if torch.cuda.is_available() else "cpu"
-            
+            asr_options = {
+            "hotwords":None,
+            "multilingual":True,
+            }
             # Load the WhisperX model
-            model = whisperx.load_model("large-v3", device=device)
+            model = whisperx.load_model("large-v3", device=device, compute_type="float16")
 
             # Transcribe the audio
-            result = model.transcribe(audio_file)
+            result = model.transcribe(audio_file, batch_size=32)
 
             # Output file path
             transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
