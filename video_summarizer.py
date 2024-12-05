@@ -105,7 +105,7 @@ class VideoSummarizer:
             # or run on CPU with INT8
             # model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
-            segments, info = self.batched_model.transcribe(audio_file, batch_size=16)
+            segments, info = self.batched_model.transcribe(audio_file, batch_size=8)
 
             print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
             transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
