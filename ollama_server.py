@@ -1,11 +1,12 @@
-import asyncio
+import subprocess
 from datetime import datetime
+import time
 
 LOG_FILE = "ollama_serve.log"
 
-async def monitor_ollama_serve():
+def monitor_ollama_serve():
     """
-    Asynchronously runs the "ollama serve" command and monitors the status of the spawned process,
+    Runs the "ollama serve" command and monitors the status of the spawned process,
     restarting it if it is killed. Logs output to a file.
     """
     command = ["ollama", "serve"]  # The command to execute
@@ -14,24 +15,25 @@ async def monitor_ollama_serve():
         log_message("Starting 'ollama serve'...")
         try:
             # Start the subprocess
-            process = await asyncio.create_subprocess_exec(
-                *command,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+            process = subprocess.Popen(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
             )
 
-            # Monitor the process
-            stdout_task = asyncio.create_task(_log_stream_to_file(process.stdout, "[stdout]"))
-            stderr_task = asyncio.create_task(_log_stream_to_file(process.stderr, "[stderr]"))
+            # Log the output streams
+            stdout_thread = _log_stream_to_file(process.stdout, "[stdout]")
+            stderr_thread = _log_stream_to_file(process.stderr, "[stderr]")
 
             # Wait for the process to finish
-            return_code = await process.wait()
+            return_code = process.wait()
 
             log_message(f"'ollama serve' exited with code {return_code}")
 
-            # Cancel logging tasks
-            stdout_task.cancel()
-            stderr_task.cancel()
+            # Stop logging threads
+            stdout_thread.join()
+            stderr_thread.join()
 
             # Restart the process if it was killed or crashed
             if return_code != 0:
@@ -42,23 +44,30 @@ async def monitor_ollama_serve():
         except Exception as e:
             log_message(f"Error occurred: {e}")
             log_message("Retrying in 5 seconds...")
-            await asyncio.sleep(5)
+            time.sleep(5)
 
-async def _log_stream_to_file(stream, prefix):
+def _log_stream_to_file(stream, prefix):
     """
-    Asynchronously logs lines from a stream to a file with a prefix.
+    Logs lines from a stream to a file with a prefix.
 
     :param stream: The stream to read lines from.
     :param prefix: The prefix to prepend to each line of output.
     """
-    try:
-        while True:
-            line = await stream.readline()
-            if not line:
-                break
-            log_message(f"{prefix} {line.decode().strip()}")
-    except asyncio.CancelledError:
-        pass  # Allow cancellation of logging tasks
+    from threading import Thread
+
+    def log_lines():
+        try:
+            for line in iter(stream.readline, ""):
+                if line:
+                    log_message(f"{prefix} {line.strip()}")
+        except Exception as e:
+            log_message(f"Error logging stream: {e}")
+        finally:
+            stream.close()
+
+    thread = Thread(target=log_lines, daemon=True)
+    thread.start()
+    return thread
 
 def log_message(message):
     """
@@ -70,6 +79,6 @@ def log_message(message):
     with open(LOG_FILE, "a") as f:
         f.write(f"[{timestamp}] {message}\n")
 
-# To start monitoring, run the following in an asyncio loop
+# To start monitoring
 if __name__ == "__main__":
-    asyncio.run(monitor_ollama_serve())
+    monitor_ollama_serve()
