@@ -4,63 +4,66 @@
     <meta charset="UTF-8">
     <title>YouTube Video Summarizer</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-6 text-center">YouTube Video Summarizer</h1>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">YouTube Video Summarizer</h1>
         
-        <form id="summarize-form">
-            <div class="mb-4">
-                <label for="video-url" class="block text-gray-700 font-bold mb-2">
-                    YouTube Video URL
-                </label>
-                <input 
-                    type="url" 
-                    id="video-url" 
-                    name="video_url" 
-                    required 
-                    placeholder="Paste YouTube video URL"
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        <div class="max-w-xl mx-auto mb-8">
+            <form id="summarize-form">
+                <div class="mb-4">
+                    <label for="video-url" class="block text-gray-700 font-bold mb-2">
+                        YouTube Video URL
+                    </label>
+                    <input 
+                        type="url" 
+                        id="video-url" 
+                        name="video_url" 
+                        required 
+                        placeholder="Paste YouTube video URL"
+                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                </div>
+                
+                <div class="mb-4">
+                    <label for="model" class="block text-gray-700 font-bold mb-2">
+                        Summarization Model
+                    </label>
+                    <select 
+                        id="model" 
+                        name="model" 
+                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="artifish/llama3.2-uncensored">Llama 3.2 Uncensored</option>
+                        <option value="qwen2.5:7b-instruct-q5_0">Qwen 2.5</option>
+                        <option value="qwen-summarizer">Qwen Summarizer</option>
+                    </select>
+                </div>
+                
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
                 >
-            </div>
-            
-            <div class="mb-4">
-                <label for="model" class="block text-gray-700 font-bold mb-2">
-                    Summarization Model
-                </label>
-                <select 
-                    id="model" 
-                    name="model" 
-                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option value="artifish/llama3.2-uncensored">Llama 3.2 Uncensored</option>
-                    <option value="qwen2.5:7b-instruct-q5_0">Qwen 2.5</option>
-                    <option value="qwen-summarizer">Qwen Summarizer</option>
-                </select>
-            </div>
-            
-            <button 
-                type="submit" 
-                class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
-            >
-                Summarize Video
-            </button>
-        </form>
+                    Summarize Video
+                </button>
+            </form>
+        </div>
         
         <div id="loading" class="hidden mt-4 text-center">
             <p class="text-blue-500">Processing video... Please wait</p>
         </div>
         
-        <div id="results" class="hidden mt-4">
-            <div class="bg-gray-50 p-4 rounded-md mb-4">
-                <h2 class="font-bold mb-2">Summary</h2>
-                <p id="summary-text" class="text-gray-700"></p>
+        <div id="results" class="hidden">
+            <div class="w-full bg-gray-50 p-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Summary</h2>
+                <div id="summary-text" class="prose max-w-full text-gray-700"></div>
             </div>
             
-            <div class="bg-gray-50 p-4 rounded-md">
-                <h2 class="font-bold mb-2">Full Transcription</h2>
-                <pre id="transcription-text" class="text-xs text-gray-600 overflow-auto max-h-40"></pre>
+            <div class="w-full bg-gray-50 p-6">
+                <h2 class="text-2xl font-bold mb-4">Full Transcription</h2>
+                <div id="transcription-text" class="prose max-w-full text-gray-600 overflow-auto"></div>
             </div>
         </div>
     </div>
@@ -90,8 +93,8 @@
                 loadingDiv.classList.add('hidden');
                 resultsDiv.classList.remove('hidden');
                 
-                document.getElementById('summary-text').textContent = response.data.summary;
-                document.getElementById('transcription-text').textContent = response.data.transcription;
+                document.getElementById('summary-text').innerHTML = marked.parse(response.data.summary);
+                document.getElementById('transcription-text').innerHTML = marked.parse(response.data.transcription);
             })
             .catch(function (error) {
                 loadingDiv.classList.add('hidden');
