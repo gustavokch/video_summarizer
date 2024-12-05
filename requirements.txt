@@ -1,0 +1,11 @@
+# Core dependencies
+flask
+yt-dlp
+werkzeug
+
+# Optional dependencies for advanced functionality
+requests
+typing-extensions
+
+# Development and testing
+pytest
