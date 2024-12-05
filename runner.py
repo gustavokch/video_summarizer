@@ -17,7 +17,7 @@ class FileChangeHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if event.src_path == '/content/cloudflared_url.txt':
             with open('/content/cloudflared_url.txt', 'r') as file:
-                print(file.read())
+                print("Cloudflare Tunnel URL: "+str(file.read()))
 
 # Setup and start the watchdog observer
 def start_file_watcher():
