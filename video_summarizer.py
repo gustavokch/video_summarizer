@@ -98,10 +98,10 @@ class VideoSummarizer:
             device = "cuda" if torch.cuda.is_available() else "cpu"
             asr_options = {
             "hotwords":None,
-            "multilingual":True,
+            "multilingual":None,
             }
             # Load the WhisperX model
-            model = whisperx.load_model("large-v3", device=device, compute_type="float16",asr_options=asr_options)
+            model = whisperx.load_model("medium", device=device, compute_type="float16",asr_options=asr_options)
 
             # Transcribe the audio
             result = model.transcribe(audio_file, batch_size=32)
