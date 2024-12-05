@@ -8,6 +8,7 @@ faster-whisper
 torch
 torchvision
 torchaudio
+watchdog
 # Optional dependencies for advanced functionality
 requests
 typing-extensions
