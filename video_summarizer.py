@@ -38,7 +38,7 @@ class VideoSummarizer:
     def load_model(self):   
       # Ensure CUDA is available
         self.device = "cuda"
-        self.model_size = "faster-whisper-large-v3-turbo"
+        self.model_size = "mobiuslabsgmbh/faster-whisper-large-v3-turbo"
             # Run on GPU with FP16
         self.model = WhisperModel(self.model_size, device="cuda", compute_type="float16")
         self.batched_model = BatchedInferencePipeline(model=self.model)
