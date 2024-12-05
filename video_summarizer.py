@@ -23,7 +23,13 @@ class VideoSummarizer:
         self.download_dir = download_dir
         self.transcription_dir = transcription_dir
         self.summary_dir = summary_dir
-        
+                    # Ensure CUDA is available
+        self.device = "cuda"
+        self.model_size = "large-v3"
+
+            # Run on GPU with FP16
+        self.model = WhisperModel(self.model_size, device="cuda", compute_type="float16")
+        self.batched_model = BatchedInferencePipeline(model=model)
         # Create necessary directories
         for directory in [download_dir, transcription_dir, summary_dir]:
             os.makedirs(directory, exist_ok=True)
@@ -93,31 +99,26 @@ class VideoSummarizer:
             str: Path to transcription file
         """
         try:
-            # Ensure CUDA is available
-            device = "cuda"
-            model_size = "large-v3"
 
-            # Run on GPU with FP16
-            model = WhisperModel(model_size, device="cuda", compute_type="float16")
-            batched_model = BatchedInferencePipeline(model=model)
             # or run on GPU with INT8
             # model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
             # or run on CPU with INT8
             # model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
-            segments, info = batched_model.transcribe(audio_file, batch_size=16)
+            segments, info = self.batched_model.transcribe(audio_file, batch_size=16)
 
             print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
-
-            for segment in segments:
-                print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+            transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
+            with open(transcription_file, 'w') as f:    
+                for segment in segments:
+                    print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))          
+                    f.write(segment.text + '\n')
             segments = list(segments)
             # Output file path
-            transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
-            result = str(segments)
+            #result = str(segments)
             # Save the transcription to a text file
-            with open(transcription_file, 'w') as f:
-                f.write(result)
+            #with open(transcription_file, 'w') as f:
+            #    f.write(result)
             
             return transcription_file
         except Exception as e:
@@ -152,7 +153,7 @@ class VideoSummarizer:
         except Exception as e:
             raise Exception(f"Summarization failed: {e}")
     
-    def process_video(self, video_url: str, model_name: str = "artifish/llama3.2-uncensored") -> Tuple[str, str]:
+    def process_video(self, video_url: str, model_name: str) -> Tuple[str, str]:
         """
         Comprehensive method to process a video from URL to summary
         
