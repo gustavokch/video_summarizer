@@ -106,7 +106,8 @@ class VideoSummarizer:
             # model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
             # or run on CPU with INT8
             # model = WhisperModel(model_size, device="cpu", compute_type="int8")
-
+            gc.collect()
+            torch.cuda.empty_cache()
             segments, info = self.batched_model.transcribe(audio_file, batch_size=8)
 
             print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
@@ -144,7 +145,8 @@ class VideoSummarizer:
         """
         try:
             from subprocess import Popen, PIPE
-            
+            gc.collect()
+            torch.cuda.empty_cache()            
             process = Popen(
                 ["ollama", "run", model_name], 
                 stdin=PIPE, stdout=PIPE, stderr=PIPE
