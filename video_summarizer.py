@@ -2,7 +2,8 @@ import os
 import subprocess
 from typing import Tuple, Optional
 import yt_dlp
-
+import whisperx
+import torch
 
 class VideoSummarizer:
     """
