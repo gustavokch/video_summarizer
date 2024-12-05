@@ -4,7 +4,7 @@ flask
 yt-dlp
 werkzeug
 aiofiles
-whisperx
+faster-whisper
 torch
 torchvision
 torchaudio

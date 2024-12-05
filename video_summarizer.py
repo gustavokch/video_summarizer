@@ -2,8 +2,7 @@ import os
 import subprocess
 from typing import Tuple, Optional
 import yt_dlp
-import whisperx
-import torch
+from faster_whisper import WhisperModel, BatchedInferencePipeline
 
 class VideoSummarizer:
     """
@@ -96,16 +95,23 @@ class VideoSummarizer:
         try:
             # Ensure CUDA is available
             device = "cuda" if torch.cuda.is_available() else "cpu"
-            asr_options = {
-            "hotwords":None,
-            "multilingual":None,
-            }
-            # Load the WhisperX model
-            model = whisperx.load_model("medium", device=device, compute_type="float16",asr_options=asr_options)
+            model_size = "large-v3"
 
-            # Transcribe the audio
-            result = model.transcribe(audio_file, batch_size=32)
+            # Run on GPU with FP16
+            model = WhisperModel(model_size, device="cuda", compute_type="float16")
+            batched_model = BatchedInferencePipeline(model=model)
+            # or run on GPU with INT8
+            # model = WhisperModel(model_size, device="cuda", compute_type="int8_float16")
+            # or run on CPU with INT8
+            # model = WhisperModel(model_size, device="cpu", compute_type="int8")
 
+            segments, info = batched_model.transcribe(audio_file, batch_size=16)
+
+            print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
+
+            for segment in segments:
+                print("[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text))
+            result = str(list(segments))
             # Output file path
             transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
             
