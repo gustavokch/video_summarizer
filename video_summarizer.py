@@ -174,8 +174,8 @@ class VideoSummarizer:
             torch.cuda.empty_cache()
 
             # Use Ollama's Python API to generate the summary
-            client = ollama.Client(model=model_name)
-            response = client.generate(prompt=input_text)
+            client = ollama.Client()
+            response = client.generate(model=model_name, prompt=input_text)
             
             if not response or not response['text']:
                 raise Exception("No response from Ollama API.")
