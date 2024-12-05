@@ -4,6 +4,7 @@ from werkzeug.utils import secure_filename
 from video_summarizer import VideoSummarizer, AVAILABLE_MODELS
 
 summarizer = VideoSummarizer()
+summarizer.load_model()
 app = Flask(__name__)
 
 # Configuration
