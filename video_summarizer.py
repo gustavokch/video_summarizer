@@ -27,10 +27,6 @@ class VideoSummarizer:
         self.summary_dir = summary_dir
         gc.collect()
         torch.cuda.empty_cache()
-        if self.model != None:
-            del self.model
-        if self.batched_model != None:
-            del self.batched_model
         gc.collect()
         torch.cuda.empty_cache()
                     # Ensure CUDA is available
