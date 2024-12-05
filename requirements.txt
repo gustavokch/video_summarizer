@@ -9,6 +9,7 @@ torch
 torchvision
 torchaudio
 watchdog
+ctranslate2==4.4.0
 # Optional dependencies for advanced functionality
 requests
 typing-extensions
