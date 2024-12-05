@@ -33,7 +33,10 @@ def index():
 
             # Initialize VideoSummarizer
             summarizer = VideoSummarizer()
-            
+            monitor_ollama_serve()
+            log_path = "/content/cloudflared.log"
+            url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
+            monitor_log_for_pattern(log_path, url_pattern)
             # Process the video
             transcription_file, summary = summarizer.process_video(
                 video_url, 
@@ -74,10 +77,7 @@ def request_entity_too_large(error):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-    monitor_ollama_serve()
-    log_path = "/content/cloudflared.log"
-    url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
-    monitor_log_for_pattern(log_path, url_pattern)
+
 
 
     
