@@ -5,6 +5,11 @@ from video_summarizer import VideoSummarizer, AVAILABLE_MODELS
 from log_watchdog import monitor_log_for_pattern
 import asyncio
 
+summarizer = VideoSummarizer()
+
+async def bg_processes():
+    summarizer.log_watcher()
+    summarizer.ollama_server()
 app = Flask(__name__)
 
 # Configuration
@@ -30,8 +35,8 @@ def index():
                 }), 400
 
             # Initialize VideoSummarizer
-            summarizer = VideoSummarizer()
-            asyncio.run(VideoSummarizer.ollama_server())
+            #
+            #asyncio.run(VideoSummarizer.ollama_server())
 
             # Process the video
             transcription_file, summary = summarizer.process_video(
@@ -72,9 +77,7 @@ def request_entity_too_large(error):
     }), 413
 
 if __name__ == '__main__':
-    log_path = "/content/cloudflared.log"
-    url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
-    monitor_log_for_pattern(log_path, url_pattern)
+    asyncio.run(bg_processes())
     app.run(debug=True, host='0.0.0.0', port=5000)
 
 

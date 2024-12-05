@@ -33,8 +33,9 @@ async def monitor_log_for_pattern(log_file_path: str, pattern: str):
                     match = re.search(pattern, line)
                     if match:
                         print(f"\033[1;33mCloudflared Tunnel URL: {match.group(0)}\033[0m")
+                        cftunnel_url = {match.group(0)}
                         #print(f"Cloudflared Tunnel URL: {match.group(0)}")
-                        return  # Stop monitoring once a match is found
+                        return cftunnel_url  # Stop monitoring once a match is found
                 last_position = await log_file.tell()  # Update the last read position
         except FileNotFoundError:
             # In case the file is deleted after being found
@@ -44,6 +45,6 @@ async def monitor_log_for_pattern(log_file_path: str, pattern: str):
         await asyncio.sleep(1)  # Wait for 1 second before checking again
         
 if __name__ == "__main__":
-    log_path = "/content/cloudflared.log"
+    log_path = "cloudflared.log"
     url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
     asyncio.run(monitor_log_for_pattern(log_path, url_pattern))

@@ -176,10 +176,15 @@ class VideoSummarizer:
         
     @staticmethod
     async def ollama_server():
+        # Call the monitor function
+        await monitor_ollama_serve()
+    
+    @staticmethod
+    async def log_watcher():
         log_path = "/content/cloudflared.log"
         url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
-        # Call the monitor function
-        asyncio.run(monitor_ollama_serve())
+        cf_url = await monitor_log_for_pattern(log_path, url_pattern)
+        return cf_url
 
 # Available Ollama models
 AVAILABLE_MODELS = [
