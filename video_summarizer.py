@@ -3,8 +3,6 @@ import subprocess
 from typing import Tuple, Optional
 import yt_dlp
 import asyncio
-from ollama_server import monitor_ollama_serve
-from log_watchdog import monitor_log_for_pattern
 
 class VideoSummarizer:
     """
@@ -174,18 +172,6 @@ class VideoSummarizer:
         except Exception as e:
             raise Exception(f"Video processing failed: {e}")
         
-    @staticmethod
-    async def ollama_server():
-        # Call the monitor function
-        await monitor_ollama_serve()
-    
-    @staticmethod
-    async def log_watcher():
-        log_path = "/content/cloudflared.log"
-        url_pattern = r"https://[a-zA-Z0-9.-]+\.trycloudflare\.com"
-        cf_url = await monitor_log_for_pattern(log_path, url_pattern)
-        return cf_url
-
 # Available Ollama models
 AVAILABLE_MODELS = [
     "artifish/llama3.2-uncensored",
