@@ -1,60 +1,70 @@
 import subprocess
 from datetime import datetime
 import time
+from threading import Thread
 
 LOG_FILE = "ollama_serve.log"
 
 def monitor_ollama_serve():
     """
-    Runs the "ollama serve" command and monitors the status of the spawned process,
-    restarting it if it is killed. Logs output to a file.
+    Monitors the 'ollama serve' command in a separate thread, restarting it if it is killed.
+    Logs output to a file.
     """
-    command = ["ollama", "serve"]  # The command to execute
+    command = ["ollama", "serve"]
 
     while True:
         log_message("Starting 'ollama serve'...")
         try:
-            # Start the subprocess
-            process = subprocess.Popen(
-                command,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True
-            )
+            # Create a thread to run the command
+            process_thread = Thread(target=_run_process, args=(command,), daemon=True)
+            process_thread.start()
 
-            # Log the output streams
-            stdout_thread = _log_stream_to_file(process.stdout, "[stdout]")
-            stderr_thread = _log_stream_to_file(process.stderr, "[stderr]")
+            # Wait for the thread to finish
+            process_thread.join()
 
-            # Wait for the process to finish
-            return_code = process.wait()
-
-            log_message(f"'ollama serve' exited with code {return_code}")
-
-            # Stop logging threads
-            stdout_thread.join()
-            stderr_thread.join()
-
-            # Restart the process if it was killed or crashed
-            if return_code != 0:
-                log_message("'ollama serve' crashed. Restarting...")
-            else:
-                log_message("'ollama serve' exited normally. Stopping monitor.")
-                break
+            log_message("'ollama serve' thread finished. Restarting...")
         except Exception as e:
             log_message(f"Error occurred: {e}")
             log_message("Retrying in 5 seconds...")
             time.sleep(5)
 
+def _run_process(command):
+    """
+    Runs the specified command and logs its output to a file. This function is executed in a thread.
+
+    :param command: The command to execute as a list of arguments.
+    """
+    try:
+        process = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+
+        # Log the output streams
+        stdout_thread = _log_stream_to_file(process.stdout, "[stdout]")
+        stderr_thread = _log_stream_to_file(process.stderr, "[stderr]")
+
+        # Wait for the process to finish
+        process.wait()
+
+        # Stop logging threads
+        stdout_thread.join()
+        stderr_thread.join()
+
+        log_message(f"'ollama serve' exited with code {process.returncode}")
+
+    except Exception as e:
+        log_message(f"Error running process: {e}")
+
 def _log_stream_to_file(stream, prefix):
     """
-    Logs lines from a stream to a file with a prefix.
+    Logs lines from a stream to a file with a prefix in a separate thread.
 
     :param stream: The stream to read lines from.
     :param prefix: The prefix to prepend to each line of output.
     """
-    from threading import Thread
-
     def log_lines():
         try:
             for line in iter(stream.readline, ""):
