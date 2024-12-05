@@ -21,8 +21,8 @@ async def main():
         shell=True,
         check=True
             )
-    await run_app()    
-    await ollama_server()
-    await log_watcher()
+    asyncio.run(run_app())   
+    asyncio.run(ollama_server())
+    asyncio.run(log_watcher())
 if __name__ == '__main__':
     asyncio.run(main())
