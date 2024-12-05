@@ -101,7 +101,7 @@ class VideoSummarizer:
             "multilingual":True,
             }
             # Load the WhisperX model
-            model = whisperx.load_model("large-v3", device=device, compute_type="float16")
+            model = whisperx.load_model("large-v3", device=device, compute_type="float16",asr_options=asr_options)
 
             # Transcribe the audio
             result = model.transcribe(audio_file, batch_size=32)
