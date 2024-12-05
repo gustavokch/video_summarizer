@@ -117,7 +117,7 @@ class VideoSummarizer:
             
             # Save the transcription to a text file
             with open(transcription_file, 'w') as f:
-                f.write(result['text'])
+                f.write(result)
             
             return transcription_file
         except Exception as e:
