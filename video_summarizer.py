@@ -153,83 +153,46 @@ class VideoSummarizer:
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")
     
-def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
-    """
-    Summarize text using Ollama
-    
-    Args:
-        input_text (str): Text to summarize
-        model_name (str): Ollama model to use for summarization
-    
-    Returns:
-        str: Generated summary
-    """
-    try:
-        # Optional: Clean up GPU memory if applicable
-        clean_vram()
-        gc.collect()
-        torch.cuda.empty_cache()
-        gc.collect()
-        torch.cuda.empty_cache()
+    def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
+        """
+        Summarize text using Ollama
         
-        # Use Ollama's Python API to generate the summary
-        client = ollama.Client(model=model_name)
-        response = client.generate(prompt=input_text)
+        Args:
+            input_text (str): Text to summarize
+            model_name (str): Ollama model to use for summarization
         
-        if not response or not response['text']:
-            raise Exception("No response from Ollama API.")
+        Returns:
+            str: Generated summary
+        """
+        try:
 
-        summary = response['text'].strip()
+            # Optional: Clean up GPU memory if applicable
+            clean_vram()
+            gc.collect()
+            torch.cuda.empty_cache()
+            gc.collect()
+            torch.cuda.empty_cache()
 
-        # Save the summary to a file
-        summary_file = os.path.join(self.summary_dir, 'summary.txt')
-        with open(summary_file, "w") as f:
-            f.write(summary)
-        
-        return summary
-    except Exception as e:
-        raise Exception(f"Summarization failed: {e}")
+            # Use Ollama's Python API to generate the summary
+            client = ollama.Client(model=model_name)
+            response = client.generate(prompt=input_text)
+            
+            if not response or not response['text']:
+                raise Exception("No response from Ollama API.")
 
-def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
-    """
-    Summarize text using Ollama
-    
-    Args:
-        input_text (str): Text to summarize
-        model_name (str): Ollama model to use for summarization
-    
-    Returns:
-        str: Generated summary
-    """
-    try:
+            summary = response['text'].strip()
 
-        # Optional: Clean up GPU memory if applicable
-        clean_vram()
-        gc.collect()
-        torch.cuda.empty_cache()
-        gc.collect()
-        torch.cuda.empty_cache()
-
-        # Use Ollama's Python API to generate the summary
-        client = ollama.Client(model=model_name)
-        response = client.generate(prompt=input_text)
-        
-        if not response or not response['text']:
-            raise Exception("No response from Ollama API.")
-
-        summary = response['text'].strip()
-
-        # Save the summary to a file
-        summary_file = os.path.join(self.summary_dir, 'summary.txt')
-        with open(summary_file, "w") as f:
-            f.write(summary)
-        
-        return summary
-    except Exception as e:
-        raise Exception(f"Summarization failed: {e}")
+            # Save the summary to a file
+            summary_file = os.path.join(self.summary_dir, 'summary.txt')
+            with open(summary_file, "w") as f:
+                f.write(summary)
+            
+            return summary
+        except Exception as e:
+            raise Exception(f"Summarization failed: {e}")
 
     
-def process_video(self, video_url: str, model_name: str) -> Tuple[str, str]:
+    def process_video(self, video_url: str, model_name: str) -> Tuple[str, str]:
         """
         Comprehensive method to process a video from URL to summary
         

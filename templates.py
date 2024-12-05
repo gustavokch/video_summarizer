@@ -46,8 +46,12 @@ def generate_modelfile(model_name, model_family):
 
 def create_model_from_file(model_name,model_family):
     model_file = str(f"./modelfiles/Modelfile-{model_family}")
-    subprocess.Popen(['ollama', 'create', f"{model_name}-summarizer", '-f', f"{model_file}"],stdout=None, stderr=None)
-    print("Added model "+f"{model_name}-summarizer"+" to ollama!")
+    with open("./models.txt", "r") as txt_models:
+        output = txt_models.readlines()
+        for line in output:
+            if not line == f"{model_name}-summarizer":
+                subprocess.Popen(['ollama', 'create', f"{model_name}-summarizer", '-f', f"{model_file}"],stdout=None, stderr=None)
+                print("Added model "+f"{model_name}-summarizer"+" to ollama!")
 
 def gen_ollama_models():
     """
@@ -61,6 +65,8 @@ def gen_ollama_models():
             model_f = str(f"{model['details'].family}")
             generate_modelfile(model_n, model_f)
             create_model_from_file(model_n, model_f)
+            with open("./models.txt", "a") as models_txt:
+                models_txt.write(model_n+"\n")
     
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -70,4 +76,6 @@ if __name__ == '__main__':
     #for model_n in model_list:
    #     generate_modelfile(model_n)
     #    create_model_from_file(model_n)
+    if os.path.isfile("./models.txt"):
+        os.remove("./models.txt")
     gen_ollama_models()

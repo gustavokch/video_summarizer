@@ -1,0 +1,2 @@
+anshuman852/mradermacher-llama-3.2-3b-instruct-uncensored:q4_k-summarizer
+anshuman852/mradermacher-llama-3.2-3b-instruct-uncensored:q4_k
