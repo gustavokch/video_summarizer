@@ -177,10 +177,10 @@ class VideoSummarizer:
             client = ollama.Client()
             response = client.generate(model=model_name, prompt=input_text)
             
-            if not response or not response['text']:
+            if not response or not response.response:
                 raise Exception("No response from Ollama API.")
 
-            summary = response['text'].strip()
+            summary = response.response
 
             # Save the summary to a file
             summary_file = os.path.join(self.summary_dir, 'summary.txt')
