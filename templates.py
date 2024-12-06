@@ -47,7 +47,7 @@ def generate_modelfile(model_name, model_family):
 def create_model_from_file(model_name,model_family):
     model_file = str(f"./modelfiles/Modelfile-{model_family}")
     with open("./models.txt", "r") as txt_models:
-        subprocess.Popen(['ollama', 'create', f"{model_name}-summarizer", '-f', f"{model_file}"],stdout=None, stderr=None)
+        subprocess.Popen(['ollama', 'create', f"{model_family}-summarizer", '-f', f"{model_file}"],stdout=None, stderr=None)
         print("Added model "+f"{model_name}-summarizer"+" to ollama!")
 
 def gen_ollama_models():
