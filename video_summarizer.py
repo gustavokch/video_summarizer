@@ -228,8 +228,10 @@ class VideoSummarizer:
             raise Exception(f"Video processing failed: {e}")
         
 # Available Ollama models
-AVAILABLE_MODELS = [
-    "artifish/llama3.2-uncensored",
-    "qwen2.5:7b-instruct-q4_K_M",
-    "qwen-summarizer"
-]
+with open("./models.txt", "r") as available_models:
+    AVAILABLE_MODELS = available_models.readlines()
+#AVAILABLE_MODELS = [
+#    "artifish/llama3.2-uncensored",
+#    "qwen2.5:7b-instruct-q4_K_M",
+#    "qwen-summarizer"
+#]
