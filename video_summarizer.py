@@ -229,7 +229,8 @@ class VideoSummarizer:
         
 # Available Ollama models
 with open("./models.txt", "r") as available_models:
-    AVAILABLE_MODELS = available_models.readlines()
+    model_lines = available_models.readlines()
+    AVAILABLE_MODELS = [sub.replace('\n', '') for sub in model_lines]
 #AVAILABLE_MODELS = [
 #    "artifish/llama3.2-uncensored",
 #    "qwen2.5:7b-instruct-q4_K_M",
