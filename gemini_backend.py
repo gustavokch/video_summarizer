@@ -5,9 +5,11 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 
 # Load .env file
-load_dotenv('./api_key')
-api_key = str(os.getenv('GOOGLE_API_KEY'))
-system_prompt = os.environ("SYSTEM_MESSAGE")
+if len(os.getenv('READ_API_KEY')) < 5:
+    load_dotenv('./api_key')
+    api_key = str(os.getenv('GOOGLE_API_KEY'))
+else:
+    api_key = str(os.getenv('READ_API_KEY'))
 
 def load_api_model():
     api_key = str(os.getenv('GOOGLE_API_KEY'))
@@ -18,6 +20,7 @@ def load_api_model():
         genai.configure(api_key=api_key)
 
 def summarize_text(audio_file_name):
+    system_prompt = os.environ("SYSTEM_MESSAGE")
     genai_file = genai.upload_file(path=f"{audio_file_name}")
     prompt = str(system_prompt)
     model = genai.GenerativeModel('models/gemini-1.5')
