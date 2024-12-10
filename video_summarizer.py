@@ -254,7 +254,7 @@ class VideoSummarizer:
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
                 genai_audio_file = genai.upload_file(path=f"{audio_file_name}")
                 load_api_model()
-                trascribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+                transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
 
                 # Create the prompt.
                 transcribe_prompt = "Generate a transcript of the speech."
