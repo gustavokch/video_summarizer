@@ -21,14 +21,14 @@ def summarize_audio(audio_file_name, sys_message):
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
     genai_file = genai.upload_file(path=f"{audio_file_name}")
+    genai.types.GenerationConfig(max_output_tokens=4096,temperature=temperature)
     system_prompt = gen_string(system_message_l)
     prompt = system_prompt
     print("Gemini System Prompt: "+prompt)
     model = genai.GenerativeModel(system_instruction=prompt, model_name='models/gemini-1.5-pro-latest')
-    response = model.generate_content(generation_config=genai.types.GenerationConfig(
-        # Only one candidate for now.
+    response = model.generate_content([prompt, genai_file], generation_config=genai.GenerationConfig(
         max_output_tokens=4096,
-        temperature=temperature,
-        )[prompt, genai_file])
+        temperature=temperature
+        ))
     print(response.text)
     return response.text
