@@ -19,7 +19,7 @@ def load_api_model():
 
 def summarize_audio(audio_file_name, sys_message):
     load_dotenv('./env')
-    temperature = int(os.getenv('TEMPERATURE'))
+    temperature = float(os.getenv('TEMPERATURE'))
     genai_file = genai.upload_file(path=f"{audio_file_name}")
     system_prompt = gen_string(system_message_l)
     prompt = system_prompt
