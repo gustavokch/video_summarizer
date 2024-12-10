@@ -85,6 +85,6 @@ if __name__ == '__main__':
             models_txt.write(model_n+"\n")
         models_txt.write('gemini'+"\n")
     sys_message = gen_string(system_message_l)
-    os.setenv("SYSTEM_MESSAGE") = str(sys_message)
+    os.setenv("SYSTEM_MESSAGE") == str(sys_message)
         
     gen_ollama_models()
