@@ -6,6 +6,7 @@ import yt_dlp
 import gc
 import torch
 from faster_whisper import WhisperModel, BatchedInferencePipeline
+import google.generativeai as genai
 from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file, gen_string
 from gemini_backend import summarize_audio, load_api_model
@@ -249,10 +250,21 @@ class VideoSummarizer:
 #                gc.collect()
 #                torch.cuda.empty_cache()   
 #                clean_vram()        
-
-                load_api_model()
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
+                genai_audio_file = genai.upload_file(path=f"{audio_file_name}")
+                load_api_model()
+                trascribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+
+                # Create the prompt.
+                transcribe_prompt = "Generate a transcript of the speech."
+                # Pass the prompt and the audio file to Gemini.
+                transcription = transcribe_model.generate_content([transcribe_prompt, genai_audio_file])
+                # Print the transcript.
+                print(transcription.text)
+                with open(transcription_file, "w") as f:
+                    f.write(str(transcription.text))
+
                 sys_message = gen_string(system_message_l)
                 summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
                 transcription_file = "/content/cloudflared.log"
