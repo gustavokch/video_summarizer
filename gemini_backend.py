@@ -22,7 +22,7 @@ def summarize_audio(audio_file_name, sys_message):
     genai_file = genai.upload_file(path=f"{audio_file_name}")
     system_message = str(os.environ["SYSTEM_MESSAGE"])
     if len(system_message) > 100:
-        system_prompt = os.getenv("SYSTEM_MESSAGE")
+        system_prompt = system_message
         prompt = str(system_prompt)
         print("Gemini System Prompt: "+prompt)
     else:
