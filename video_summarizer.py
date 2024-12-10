@@ -8,7 +8,7 @@ import torch
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file
-from gemini_backend import summarize_text
+from gemini_backend import summarize_text, load_api_model
 
 class VideoSummarizer:
     """
@@ -96,7 +96,7 @@ class VideoSummarizer:
         if not output_file:
             if sample_rate == 16000 and codec == 'wav':
                 output_file = os.path.splitext(input_file)[0] + '_16khz.wav'
-            if sample_rate == 44100 and codec =='mp3'
+            if sample_rate == 44100 and codec =='mp3':
                 output_file = os.path.splitext(input_file)[0] + '_44khz.mp3'
         
         command = [
@@ -208,42 +208,43 @@ class VideoSummarizer:
             # Download audio
             audio_file = self.download_audio(video_url)
             
-        if model_name != 'gemini':
+            if model_name != 'gemini':
 
+                # Convert to WAV
+                wav_file = self.convert_to_wav(audio_file)
+                
+                # Transcribe
+                transcription_file = self.transcribe_audio(wav_file)
+                gc.collect()
+                torch.cuda.empty_cache()   
+                clean_vram()         
+                # Read transcription
+                with open(transcription_file, "r") as f:
+                    transcription_text = f.read()
+                
+                # Summarize
+                summary = self.summarize_text(transcription_text, model_name)
+                
+                return transcription_file, summary
+            
+            if model_name == 'gemini':
+            
             # Convert to WAV
-            wav_file = self.convert_to_wav(audio_file)
-            
-            # Transcribe
-            transcription_file = self.transcribe_audio(wav_file)
-            gc.collect()
-            torch.cuda.empty_cache()   
-            clean_vram()         
-            # Read transcription
-            with open(transcription_file, "r") as f:
-                transcription_text = f.read()
-            
-            # Summarize
-            summary = self.summarize_text(transcription_text, model_name)
-            
-            return transcription_file, summary
-        
-        if model_name == 'gemini':
-        
-        # Convert to WAV
-            wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
-            audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
-            summary = gemini_backend.summarize_text(audio_file_name=f"{audio_file_name}", model_name='gemini')
-            # Transcribe
-            #transcription_file = self.transcribe_audio(wav_file)
-            #gc.collect()
-            #torch.cuda.empty_cache()   
-            #clean_vram()         
-            # Read transcription
-            with open(transcription_file, "r") as f:
-                transcription_text = f.read()
-            
-            
-            return transcription_file, summary
+                gemini_backend.load_api_model()
+                wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
+                audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
+                summary = gemini_backend.summarize_text(audio_file_name=f"{audio_file_name}", model_name='gemini')
+                # Transcribe
+                #transcription_file = self.transcribe_audio(wav_file)
+                #gc.collect()
+                #torch.cuda.empty_cache()   
+                #clean_vram()         
+                # Read transcription
+                with open(transcription_file, "r") as f:
+                    transcription_text = f.read()
+                
+                
+                return transcription_file, summary
 
 
         except Exception as e:
