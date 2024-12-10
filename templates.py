@@ -27,8 +27,6 @@ def gen_string(line_list):
         out_string = ("\n".join(str(n) for n in line_list) + "\n")
     return out_string
 
-sys_message = gen_string(system_message_l)
-os.environ["SYSTEM_MESSAGE"] = str(sys_message)
 
 def generate_modelfile(model_name, model_family):
     if not os.path.isdir("./modelfiles"):
@@ -85,5 +83,7 @@ if __name__ == '__main__':
             model_f = str(f"{model['details'].family}")      
             models_txt.write(model_n+"\n")
         models_txt.write('gemini'+"\n")
+    sys_message = gen_string(system_message_l)
+    os.environ["SYSTEM_MESSAGE"] = str(sys_message)
         
     gen_ollama_models()

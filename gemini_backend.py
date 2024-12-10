@@ -17,8 +17,7 @@ def load_api_model():
         genai.configure(api_key=api_key)
 
 def summarize_audio(audio_file_name):
-    os.environ["SYSTEM_MESSAGE"] = str(sys_message)
-    system_prompt = os.environ.get("SYSTEM_MESSAGE")
+    system_prompt = os.getenv("SYSTEM_MESSAGE")
     genai_file = genai.upload_file(path=f"{audio_file_name}")
     prompt = str(system_prompt)
     model = genai.GenerativeModel('models/gemini-1.5')
