@@ -3,6 +3,8 @@ import subprocess
 import ollama
 from dotenv import load_dotenv
 import google.generativeai as genai
+from templates import gen_string
+from video_summarizer import system_message_l
 
 def load_api_model():
   if len(os.getenv('READ_API_KEY')) < 5:
@@ -16,10 +18,16 @@ def load_api_model():
   else:
         genai.configure(api_key=api_key)
 
-def summarize_audio(audio_file_name):
-    system_prompt = os.getenv("SYSTEM_MESSAGE")
+def summarize_audio(audio_file_name, sys_message):
+
     genai_file = genai.upload_file(path=f"{audio_file_name}")
-    prompt = str(system_prompt)
+
+    if len(os.getenv("SYSTEM_MESSAGE")) > 100:
+        system_prompt = os.getenv("SYSTEM_MESSAGE")
+        prompt = str(system_prompt)
+    else:
+        system_prompt = gen_string(system_message_l)
+  
     model = genai.GenerativeModel('models/gemini-1.5-pro-latest')
     response = model.generate_content([prompt, genai_file])
     print(response.text)

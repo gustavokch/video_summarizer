@@ -7,8 +7,9 @@ import gc
 import torch
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from vram_mgmt import clean_vram
-from templates import generate_modelfile, create_model_from_file
+from templates import generate_modelfile, create_model_from_file, gen_string
 from gemini_backend import summarize_audio, load_api_model
+from dotenv import load_dotenv
 
 class VideoSummarizer:
     """
@@ -40,13 +41,24 @@ class VideoSummarizer:
             os.makedirs(directory, exist_ok=True)
 
 
-    def load_model(self):   
-      # Ensure CUDA is available
-        self.device = "cuda"
-        self.model_size = "mobiuslabsgmbh/faster-whisper-large-v3-turbo"
-            # Run on GPU with FP16
-        self.model = WhisperModel(self.model_size, device="cuda", compute_type="float16")
-        self.batched_model = BatchedInferencePipeline(model=self.model)
+    def load_model(self):
+        load_dotenv('./env')
+        test_cpu = int(os.getenv('TEST_CPU'))
+
+        if test_cpu == 0:
+            # Ensure CUDA is available
+            self.device = "cuda"
+            self.model_size = "mobiuslabsgmbh/faster-whisper-large-v3-turbo"
+                # Run on GPU with FP16
+            self.model = WhisperModel(self.model_size, device="cuda", compute_type="float16")
+            self.batched_model = BatchedInferencePipeline(model=self.model)
+        if test_cpu == 1:
+            os.environ["OMP_NUM_THREADS"] = "4"
+            self.device = "cpu"
+            self.model_size = "openai/whisper-small"
+                # Run on CPU with INT8
+            self.model = WhisperModel(self.model_size, device="cpu", compute_type="int8")
+            self.batched_model = BatchedInferencePipeline(model=self.model)
 
     def download_audio(self, youtube_url: str) -> str:
         """
@@ -241,6 +253,7 @@ class VideoSummarizer:
                 load_api_model()
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
+                sys_message = gen_string(system_message_l)
                 summary = summarize_audio(audio_file_name=f"{audio_file_name}")
  
                 # Read transcription
@@ -261,6 +274,16 @@ with open("./models.txt", "r") as available_models:
 AVAILABLE_BACKENDS = [ 'ollama',
                     'gemini',
                     'vllm']
+system_message_l = ["You are an advanced language model specialized in text summarization. Your task is to process transcribed audio and produce extensive and comprehensive summaries. Follow these guidelines:",
+"1. **Context Preservation:** Accurately capture the key points, nuances, and tone of the original content. Maintain the original intent and message of the speaker(s).",
+"2. **Clarity and Coherence:** Write the summary in a clear, structured, and logical format, ensuring it flows naturally and is easy to understand.",
+"3. **Extensiveness:** Provide a detailed summary that includes all significant aspects of the transcript, such as arguments, examples, and conclusions. Aim to create a thorough representation rather than a brief overview.",
+"4. **Segmentation:** If the video covers multiple topics, organize the summary into distinct sections or headings reflecting those topics.",
+"5. **Focus on Relevance:** Exclude irrelevant information, filler words, and repetitive content unless they contribute meaningfully to the context.",
+"6. **Formatting:** Use line breaks, bullet points, numbered lists, or subheadings as appropriate to enhance readability and comprehension.",
+"7. **Neutrality:** Remain objective and avoid introducing any bias or personal interpretations.",
+"Produce a well-rounded and exhaustive summary that provides the reader with a deep understanding of the video content without the need to refer to the original transcript."]
+
 #AVAILABLE_MODELS = [
 #    "artifish/llama3.2-uncensored",
 #    "qwen2.5:7b-instruct-q4_K_M",

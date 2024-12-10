@@ -11,6 +11,7 @@ load_dotenv('./env')
 temperature = float(os.getenv('TEMPERATURE'))
 num_ctx = int(os.getenv('NUM_CTX'))
 num_predict = int(os.getenv('NUM_PREDICT'))
+test_cpu = int(os.getenv('TEST_CPU'))
 
 system_message_l = ["You are an advanced language model specialized in text summarization. Your task is to process transcribed audio and produce extensive and comprehensive summaries. Follow these guidelines:",
 "1. **Context Preservation:** Accurately capture the key points, nuances, and tone of the original content. Maintain the original intent and message of the speaker(s).",
@@ -84,6 +85,6 @@ if __name__ == '__main__':
             models_txt.write(model_n+"\n")
         models_txt.write('gemini'+"\n")
     sys_message = gen_string(system_message_l)
-    os.environ["SYSTEM_MESSAGE"] = str(sys_message)
+    os.setenv("SYSTEM_MESSAGE") = str(sys_message)
         
     gen_ollama_models()
