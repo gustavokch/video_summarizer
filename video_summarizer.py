@@ -9,7 +9,7 @@ from faster_whisper import WhisperModel, BatchedInferencePipeline
 import google.generativeai as genai
 from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file, gen_string
-from gemini_backend import summarize_audio, load_api_model
+from gemini_backend import summarize_audio, load_api_model, transcribe_audio
 from dotenv import load_dotenv
 
 class VideoSummarizer:
@@ -252,14 +252,14 @@ class VideoSummarizer:
 #                clean_vram()        
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
-                genai_audio_file = genai.upload_file(path=f"{audio_file_name}")
                 load_api_model()
+                transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
+                transcription = transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file)
                 sys_message = gen_string(system_message_l)
                 summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
-                transcription_file = "/content/cloudflared.log"
                 # Read transcription
-#                with open(transcription_file, "r") as f:
-#                    transcription_text = f.read()
+                with open(transcription_file, "r") as f:
+                    transcription_text = f.read()
                 
                 
                 return transcription_file, summary

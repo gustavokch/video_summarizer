@@ -32,3 +32,16 @@ def summarize_audio(audio_file_name, sys_message):
         ))
     print(response.text)
     return response.text
+
+def transcribe_audio(audio_file_name, transcription_file):
+    transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    genai_audio_file = genai.upload_file(path=f"{audio_file_name}")
+    # Create the prompt.
+    transcribe_prompt = "Generate a transcript of the speech."
+    # Pass the prompt and the audio file to Gemini.
+    transcription = transcribe_model.generate_content([transcribe_prompt, genai_audio_file])
+    # Print the transcript.
+    print(transcription.text)
+    with open(transcription_file, "w") as f:
+        f.write(str(transcription.text))
+    return transcription.text
