@@ -2,7 +2,7 @@ import os
 import subprocess
 import ollama
 from dotenv import load_dotenv
-import os
+
 
 # Load .env file
 load_dotenv('./env')
@@ -12,7 +12,7 @@ temperature = float(os.getenv('TEMPERATURE'))
 num_ctx = int(os.getenv('NUM_CTX'))
 num_predict = int(os.getenv('NUM_PREDICT'))
 
-system_message_l = ["You are an advanced language model specialized in text summarization. Your task is to process transcribed videos and produce extensive and comprehensive summaries. Follow these guidelines:",
+system_message_l = ["You are an advanced language model specialized in text summarization. Your task is to process transcribed audio and produce extensive and comprehensive summaries. Follow these guidelines:",
 "1. **Context Preservation:** Accurately capture the key points, nuances, and tone of the original content. Maintain the original intent and message of the speaker(s).",
 "2. **Clarity and Coherence:** Write the summary in a clear, structured, and logical format, ensuring it flows naturally and is easy to understand.",
 "3. **Extensiveness:** Provide a detailed summary that includes all significant aspects of the transcript, such as arguments, examples, and conclusions. Aim to create a thorough representation rather than a brief overview.",
@@ -26,7 +26,9 @@ def gen_string(line_list):
     for n in line_list:
         out_string = ("\n".join(str(n) for n in line_list) + "\n")
     return out_string
+
 sys_message = gen_string(system_message_l)
+os.environ["SYSTEM_MESSAGE"] = str(sys_message)
 
 def generate_modelfile(model_name, model_family):
     if not os.path.isdir("./modelfiles"):
@@ -82,4 +84,6 @@ if __name__ == '__main__':
             model_n = str(f"{model['model']}")
             model_f = str(f"{model['details'].family}")      
             models_txt.write(model_n+"\n")
+        models_txt.write('gemini'+"\n")
+        
     gen_ollama_models()

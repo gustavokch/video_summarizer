@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
-from video_summarizer import VideoSummarizer, AVAILABLE_MODELS
+from video_summarizer import VideoSummarizer, AVAILABLE_MODELS, AVAILABLE_BACKENDS
 
 summarizer = VideoSummarizer()
 summarizer.load_model()

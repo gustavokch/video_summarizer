@@ -8,6 +8,7 @@ import torch
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file
+from gemini_backend import summarize_text
 
 class VideoSummarizer:
     """
@@ -81,7 +82,7 @@ class VideoSummarizer:
         except Exception as e:
             raise Exception(f"Failed to download audio: {e}")
     
-    def convert_to_wav(self, input_file: str, output_file: Optional[str] = None) -> str:
+    def convert_to_wav(self, input_file: str, output_file: Optional[str] = None, sample_rate: Optional[int] = 16000, codec: Optional[str] = 'wav') -> str:
         """
         Convert audio to 16kHz WAV format
         
@@ -93,10 +94,13 @@ class VideoSummarizer:
             str: Path to converted WAV file
         """
         if not output_file:
-            output_file = os.path.splitext(input_file)[0] + '_16khz.wav'
+            if sample_rate == 16000 and codec == 'wav':
+                output_file = os.path.splitext(input_file)[0] + '_16khz.wav'
+            if sample_rate == 44100 and codec =='mp3'
+                output_file = os.path.splitext(input_file)[0] + '_44khz.mp3'
         
         command = [
-            'ffmpeg', '-y', '-i', input_file, '-ar', '16000', '-ac', '1', output_file
+            'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', output_file
         ]
         subprocess.run(command, check=True)
         
@@ -167,11 +171,8 @@ class VideoSummarizer:
         try:
 
             # Optional: Clean up GPU memory if applicable
+            gc.collect()
             clean_vram()
-            gc.collect()
-            torch.cuda.empty_cache()
-            gc.collect()
-            torch.cuda.empty_cache()
 
             # Use Ollama's Python API to generate the summary
             client = ollama.Client()
@@ -207,6 +208,8 @@ class VideoSummarizer:
             # Download audio
             audio_file = self.download_audio(video_url)
             
+        if model_name != 'gemini':
+
             # Convert to WAV
             wav_file = self.convert_to_wav(audio_file)
             
@@ -224,6 +227,25 @@ class VideoSummarizer:
             
             return transcription_file, summary
         
+        if model_name == 'gemini':
+        
+        # Convert to WAV
+            wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
+            audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
+            summary = gemini_backend.summarize_text(audio_file_name=f"{audio_file_name}", model_name='gemini')
+            # Transcribe
+            #transcription_file = self.transcribe_audio(wav_file)
+            #gc.collect()
+            #torch.cuda.empty_cache()   
+            #clean_vram()         
+            # Read transcription
+            with open(transcription_file, "r") as f:
+                transcription_text = f.read()
+            
+            
+            return transcription_file, summary
+
+
         except Exception as e:
             raise Exception(f"Video processing failed: {e}")
         
@@ -231,6 +253,9 @@ class VideoSummarizer:
 with open("./models.txt", "r") as available_models:
     model_lines = available_models.readlines()
     AVAILABLE_MODELS = [sub.replace('\n', '') for sub in model_lines]
+AVAILABLE_BACKENDS = [ 'ollama',
+                    'gemini',
+                    'vllm']
 #AVAILABLE_MODELS = [
 #    "artifish/llama3.2-uncensored",
 #    "qwen2.5:7b-instruct-q4_K_M",
