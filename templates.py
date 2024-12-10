@@ -75,6 +75,9 @@ if __name__ == '__main__':
     #for model_n in model_list:
    #     generate_modelfile(model_n)
     #    create_model_from_file(model_n)
+
+    sys_message = gen_string(system_message_l)
+    os.environ["SYSTEM_MESSAGE"] = sys_message
     if os.path.isfile("./models.txt"):
         os.remove("./models.txt")
     models = ollama.list()
@@ -83,8 +86,5 @@ if __name__ == '__main__':
             model_n = str(f"{model['model']}")
             model_f = str(f"{model['details'].family}")      
             models_txt.write(model_n+"\n")
-        models_txt.write('gemini'+"\n")
-    sys_message = gen_string(system_message_l)
-    os.setenv("SYSTEM_MESSAGE") == str(sys_message)
-        
+        models_txt.write('gemini'+"\n")        
     gen_ollama_models()
