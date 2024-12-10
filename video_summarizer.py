@@ -240,25 +240,25 @@ class VideoSummarizer:
                 return transcription_file, summary
             
             if model_name == 'gemini':
-            
+
             # Convert to WAV
 
                 # Transcribe
-                t_wav_file = self.convert_to_wav(audio_file, sample_rate=16000, codec='wav')
-                transcription_file = self.transcribe_audio(t_wav_file)
-                gc.collect()
-                torch.cuda.empty_cache()   
-                clean_vram()        
+#                t_wav_file = self.convert_to_wav(audio_file, sample_rate=16000, codec='wav')
+#                transcription_file = self.transcribe_audio(t_wav_file)
+#                gc.collect()
+#                torch.cuda.empty_cache()   
+#                clean_vram()        
 
                 load_api_model()
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
                 sys_message = gen_string(system_message_l)
                 summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
- 
+                transcription_file = "/content/cloudflared.log"
                 # Read transcription
-                with open(transcription_file, "r") as f:
-                    transcription_text = f.read()
+#                with open(transcription_file, "r") as f:
+#                    transcription_text = f.read()
                 
                 
                 return transcription_file, summary
