@@ -44,9 +44,9 @@ def main():
     backend = os.environ.get("BACKEND")
     p1 = run_script_no_stdout('ollama_server.py')  # No stdout for this script
     p2 = run_script_no_stdout('log_watchdog.py')  # No stdout for this script
-    p3 = run_script_with_stdout('app.py')  # With stdout for this script
+    p3 = run_script_with_stdout('templates.py')  # With stdout for this script
     p4 = run_script_no_stdout('cloudflared.py')
-    p5 = run_script_with_stdout('templates.py')
+    p5 = run_script_with_stdout('app.py')
     
     # Start the file watcher for cloudflared_url.txt
     observer = start_file_watcher()
