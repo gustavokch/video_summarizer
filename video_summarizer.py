@@ -230,15 +230,19 @@ class VideoSummarizer:
             if model_name == 'gemini':
             
             # Convert to WAV
+
+                # Transcribe
+                t_wav_file = self.convert_to_wav(audio_file, sample_rate=16000, codec='wav')
+                transcription_file = self.transcribe_audio(t_wav_file)
+                gc.collect()
+                torch.cuda.empty_cache()   
+                clean_vram()        
+
                 load_api_model()
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
-                summary = summarize_audio(audio_file_name=f"{audio_file_name}", model_name='gemini')
-                # Transcribe
-                #transcription_file = self.transcribe_audio(wav_file)
-                #gc.collect()
-                #torch.cuda.empty_cache()   
-                #clean_vram()         
+                summary = summarize_audio(audio_file_name=f"{audio_file_name}")
+ 
                 # Read transcription
                 with open(transcription_file, "r") as f:
                     transcription_text = f.read()
