@@ -20,7 +20,7 @@ def summarize_audio(audio_file_name):
     system_prompt = os.getenv("SYSTEM_MESSAGE")
     genai_file = genai.upload_file(path=f"{audio_file_name}")
     prompt = str(system_prompt)
-    model = genai.GenerativeModel('models/gemini-1.5')
+    model = genai.GenerativeModel('models/gemini-1.5-pro-latest')
     response = model.generate_content([prompt, genai_file])
     print(response.text)
     return response.text
