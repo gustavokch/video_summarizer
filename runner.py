@@ -41,7 +41,7 @@ def main():
     for f in files:
         if os.path.isfile(f):
             os.remove(f)
-
+    backend = os.environ.get("BACKEND")
     p1 = run_script_no_stdout('ollama_server.py')  # No stdout for this script
     p2 = run_script_no_stdout('log_watchdog.py')  # No stdout for this script
     p3 = run_script_with_stdout('app.py')  # With stdout for this script

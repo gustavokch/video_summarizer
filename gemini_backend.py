@@ -4,22 +4,19 @@ import ollama
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-# Load .env file
-if len(os.getenv('READ_API_KEY')) < 5:
-    load_dotenv('./api_key')
-    api_key = str(os.getenv('GOOGLE_API_KEY'))
-else:
-    api_key = str(os.getenv('READ_API_KEY'))
-
 def load_api_model():
-    api_key = str(os.getenv('GOOGLE_API_KEY'))
-    if api_key == "":
+  if len(os.getenv('READ_API_KEY')) < 5:
+      load_dotenv('./api_key')
+      api_key = str(os.getenv('GOOGLE_API_KEY'))
+  else:
+      api_key = str(os.getenv('READ_API_KEY'))
+  if api_key == "":
         print("No Google API key set.")
         return
-    else:
+  else:
         genai.configure(api_key=api_key)
 
-def summarize_text(audio_file_name):
+def summarize_audio(audio_file_name):
     system_prompt = os.environ("SYSTEM_MESSAGE")
     genai_file = genai.upload_file(path=f"{audio_file_name}")
     prompt = str(system_prompt)

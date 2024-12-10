@@ -8,7 +8,7 @@ import torch
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file
-from gemini_backend import summarize_text, load_api_model
+from gemini_backend import summarize_audio, load_api_model
 
 class VideoSummarizer:
     """
@@ -230,10 +230,10 @@ class VideoSummarizer:
             if model_name == 'gemini':
             
             # Convert to WAV
-                gemini_backend.load_api_model()
+                load_api_model()
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
-                summary = gemini_backend.summarize_text(audio_file_name=f"{audio_file_name}", model_name='gemini')
+                summary = summarize_audio(audio_file_name=f"{audio_file_name}", model_name='gemini')
                 # Transcribe
                 #transcription_file = self.transcribe_audio(wav_file)
                 #gc.collect()
