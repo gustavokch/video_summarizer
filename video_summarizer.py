@@ -254,7 +254,7 @@ class VideoSummarizer:
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
                 sys_message = gen_string(system_message_l)
-                summary = summarize_audio(audio_file_name=f"{audio_file_name}")
+                summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
  
                 # Read transcription
                 with open(transcription_file, "r") as f:
