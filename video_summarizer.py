@@ -254,17 +254,6 @@ class VideoSummarizer:
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
                 genai_audio_file = genai.upload_file(path=f"{audio_file_name}")
                 load_api_model()
-                transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
-
-                # Create the prompt.
-                transcribe_prompt = "Generate a transcript of the speech."
-                # Pass the prompt and the audio file to Gemini.
-                transcription = transcribe_model.generate_content([transcribe_prompt, genai_audio_file])
-                # Print the transcript.
-                print(transcription.text)
-                with open(transcription_file, "w") as f:
-                    f.write(str(transcription.text))
-
                 sys_message = gen_string(system_message_l)
                 summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
                 transcription_file = "/content/cloudflared.log"
