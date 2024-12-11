@@ -277,6 +277,7 @@ class VideoSummarizer:
                     transcription = transcribe_audio(audio_file_name=audio_file_name,transcription_file=transcription_file)
                     with open(transcription_file, 'r') as f:  
                         summary = self.summarize_text(transcription_text, model_name)
+                        print(summary)
                         summary_file = os.path.join(self.summary_dir, 'summary.txt')
                         with open(summary_file, "w") as f:
                             f.write(summary)
