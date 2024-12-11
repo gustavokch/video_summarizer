@@ -9,7 +9,7 @@ import asyncio
 from faster_whisper import WhisperModel, BatchedInferencePipeline
 import google.generativeai as genai
 from vram_mgmt import clean_vram
-from templates import generate_modelfile, create_model_from_file, gen_string
+from templates import generate_modelfile, create_model_from_file, gen_string, system_message_l
 from gemini_backend_test import summarize_audio, load_api_model, transcribe_audio, summarize_text
 from dotenv import load_dotenv
 from runner import clean_output_folders
@@ -270,6 +270,7 @@ class VideoSummarizer:
                     with open(summary_file, "w") as f:
                         print(f"Summarizing audio file={audio_file_name} with model_name={model_name} and transcription_model={transcription_model}"+"\n"+"System message: "+str(sys_message))
                         summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
+                        print("Summary: "+summary)
                         f.write(summary)
                 else:
                     load_api_model()
