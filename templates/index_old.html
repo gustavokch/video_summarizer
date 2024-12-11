@@ -83,42 +83,39 @@
     </div>
 
     <script>
-    document.getElementById('summarize-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const videoUrl = document.getElementById('video-url').value;
-        const model = document.getElementById('model').value;
-        const transcription_model = document.getElementById('transcription_model').value;
-        const loadingDiv = document.getElementById('loading');
-        const resultsDiv = document.getElementById('results');
-        
-        // Reset previous results
-        loadingDiv.classList.remove('hidden');
-        resultsDiv.classList.add('hidden');
-        
-        // Use FormData instead of URLSearchParams
-        const formData = new FormData();
-        formData.append('video_url', videoUrl);
-        formData.append('model', model);
-        formData.append('transcription_model', transcription_model);
-        
-        axios.post('/', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-        .then(function (response) {
-            loadingDiv.classList.add('hidden');
-            resultsDiv.classList.remove('hidden');
+        document.getElementById('summarize-form').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            document.getElementById('summary-text').innerHTML = marked.parse(response.data.summary);
-            document.getElementById('transcription-text').innerHTML = marked.parse(response.data.transcription);
-        })
-        .catch(function (error) {
-            loadingDiv.classList.add('hidden');
-            alert('Error: ' + (error.response?.data?.error || 'Something went wrong'));
+            const videoUrl = document.getElementById('video-url').value;
+            const model = document.getElementById('model').value;
+            const transcription_model = document.getElementById('transcription_model').value;
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+            
+            // Reset previous results
+            loadingDiv.classList.remove('hidden');
+            resultsDiv.classList.add('hidden');
+            
+            axios.post('/', new URLSearchParams({
+                video_url: videoUrl,
+                model: model
+            }), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(function (response) {
+                loadingDiv.classList.add('hidden');
+                resultsDiv.classList.remove('hidden');
+                
+                document.getElementById('summary-text').innerHTML = marked.parse(response.data.summary);
+                document.getElementById('transcription-text').innerHTML = marked.parse(response.data.transcription);
+            })
+            .catch(function (error) {
+                loadingDiv.classList.add('hidden');
+                alert('Error: ' + (error.response.data.error || 'Something went wrong'));
+            });
         });
-    });
     </script>
 </body>
 </html>
