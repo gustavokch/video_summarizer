@@ -236,8 +236,12 @@ class VideoSummarizer:
                     transcription_text = f.read()
                 
                 # Summarize
-                summary = self.summarize_text(transcription_text, model_name)
-                
+                if model_name != 'gemini':
+                    summary = self.summarize_text(transcription_text, model_name)
+                if model_name == 'gemini':
+                    sys_message = gen_string(system_message_l)
+                    summary = summarize_text(text_input=transcription_text, transcription_file=transcription_file)
+
                 return transcription_file, summary
             
             if transcription_model == 'gemini':
@@ -259,22 +263,9 @@ class VideoSummarizer:
                 sys_message = gen_string(system_message_l)
                 summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
 
-#                
-            if transcription_model != 'gemini':
-                # Convert to WAV
-                wav_file = self.convert_to_wav(audio_file)
-                
-                # Transcribe
-                transcription_file = self.transcribe_audio(wav_file)
-                gc.collect()
-                torch.cuda.empty_cache()   
-                clean_vram()         
-                # Read transcription
-                with open(transcription_file, "r") as f:
-                    transcription_text = f.read()
-                summary = summarize_text(text_input=transcription_text,transcription_file=transcription_file)         
-                
                 return transcription_file, summary
+#                
+
 
 
         except Exception as e:
