@@ -10,7 +10,7 @@ from faster_whisper import WhisperModel, BatchedInferencePipeline
 import google.generativeai as genai
 from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file, gen_string
-from gemini_backend import summarize_audio, load_api_model, transcribe_audio, summarize_text
+from gemini_backend_test import summarize_audio, load_api_model, transcribe_audio, summarize_text
 from dotenv import load_dotenv
 from runner import clean_output_folders
 
