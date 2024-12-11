@@ -268,7 +268,7 @@ class VideoSummarizer:
                     summary_file = os.path.join(self.summary_dir, 'summary.txt')
                     with open(summary_file, "w") as f:
                         print(f"Summarizing audio file={audio_file_name} with model_name={model_name} and transcription_model={transcription_model}"+"\n"+"System message: "+str(sys_message))
-                        summary = str(summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}"))
+                        summary = str(summarize_audio(sys_message=sys_message, audio_file_name=audio_file_name))
                         print("Summary: "+summary)
                         f.write(summary)
                 else:
