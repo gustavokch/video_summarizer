@@ -247,7 +247,6 @@ class VideoSummarizer:
                     summary = self.summarize_text(transcription_text, model_name)
 
                 if model_name == 'gemini':
-                    transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                     with open(transcription_file, "r") as f:
                         transcription_text = f.read()
                     load_api_model()
