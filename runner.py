@@ -2,6 +2,7 @@ import subprocess
 import os
 import sys
 import time
+import glob
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from templates import gen_ollama_models
@@ -32,6 +33,16 @@ def start_file_watcher():
     observer.schedule(event_handler, path='/content', recursive=False)
     observer.start()
     return observer
+
+def clean_output_folders():
+    folders = ["/tmp/video_downloads", 
+                "/tmp/transcriptions", 
+                "/tmp/summaries",
+                "./modelfiles"]
+    for folder in folders:
+        files = glob.glob(folder+'/*')
+        for f in files:
+        os.remove(f)
 
 def main():
     # Run the scripts in parallel
