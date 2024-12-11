@@ -56,7 +56,7 @@ def transcribe_audio(audio_file_name, transcription_file):
     genai.types.GenerationConfig(max_output_tokens=8192,temperature=temperature)
     transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     genai_file = genai.upload_file(path=f"{audio_file_name}")
-    if not api_key or not genai_audio_file:
+    if not api_key or not genai_file:
         raise ValueError("API key or file is missing for Gemini model.")
         print("API key or file is missing for Gemini model.")
     # Create the prompt.
