@@ -10,9 +10,11 @@ def load_api_model():
     api_key = str(os.getenv('GOOGLE_API_KEY'))
     if api_key == "":
         print("No Google API key set.")
-        return
+        return None
     else:
         genai.configure(api_key=api_key)
+        print("API Key: "+str(api_key))
+        return api_key
 
 def summarize_audio(audio_file_name, sys_message):
     load_dotenv('./env')
@@ -31,6 +33,7 @@ def summarize_audio(audio_file_name, sys_message):
     return response.text
 
 def summarize_text(text_input, transcription_file):
+    load_api_model()
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
     genai.types.GenerationConfig(max_output_tokens=8192,temperature=temperature)
@@ -48,8 +51,13 @@ def summarize_text(text_input, transcription_file):
     return response.text
 
 def transcribe_audio(audio_file_name, transcription_file):
+    api_key = load_api_model()
+    temperature = float(0.1)
+    genai.types.GenerationConfig(max_output_tokens=8192,temperature=temperature)
     transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     genai_audio_file = genai.upload_file(path=f"{audio_file_name}")
+    if not api_key or not genai_audio_file:
+        raise ValueError("API key or file is missing for Gemini model.")
     # Create the prompt.
     transcribe_prompt = "Generate a transcript of the speech."
     # Pass the prompt and the audio file to Gemini.

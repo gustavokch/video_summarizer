@@ -123,4 +123,4 @@ async def main():
     transcription = await transcribe_audio('audio.mp3', 'output_transcript.txt')
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()

@@ -244,13 +244,14 @@ class VideoSummarizer:
                 if model_name != 'gemini':
                     sys_message = gen_string(system_message_l)
                     summary = self.summarize_text(transcription_text, model_name)
+                    print(f"Processing video with model_name={model_name} and transcription_model={transcription_model}"+"\n"+"System message: "+str(sys_message))
 
                 if model_name == 'gemini':
                     with open(transcription_file, "r") as f:
                         transcription_text = f.read()
-                    load_api_model()
-                    sys_message = gen_string(system_message_l)
-                    summary = asyncio.run(summarize_text(text_input=transcription_text, transcription_file=transcription_file))
+                        load_api_model()
+                        sys_message = gen_string(system_message_l)
+                        summary = summarize_text(text_input=transcription_text, transcription_file=transcription_file)
 
                 return transcription_file, summary
             
@@ -262,21 +263,25 @@ class VideoSummarizer:
                     load_api_model()
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                     with open(transcription_file, 'w') as f:  
-                        transcription = asyncio.run(transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file))
+                        print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}"+"\n"+"System message: "+str(sys_message))
+                        transcription = transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file)
                         f.write(transcription)
                     summary_file = os.path.join(self.summary_dir, 'summary.txt')
                     with open(summary_file, "w") as f:
-                        summary = asyncio.run(summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}"))
+                        print(f"Summarizing audio file={audio_file_name} with model_name={model_name} and transcription_model={transcription_model}"+"\n"+"System message: "+str(sys_message))
+                        summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
                         f.write(summary)
                 else:
                     load_api_model()
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
-                    transcription = asyncio.run(transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file))
-                    summary = self.summarize_text(transcription_text, model_name)
-                    summary_file = os.path.join(self.summary_dir, 'summary.txt')
-                    with open(summary_file, "w") as f:
-                        f.write(summary)
-                
+                    transcription = transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file)
+                    with open(transcription_file, 'r') as f:  
+                        summary = self.summarize_text(transcription_text, model_name)
+                        f.write(str(summary))
+                        summary_file = os.path.join(self.summary_dir, 'summary.txt')
+                        with open(summary_file, "w") as f:
+                            f.write(summary)
+                    
                 return transcription_file, summary           
 
         except Exception as e:
