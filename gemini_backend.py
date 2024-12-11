@@ -64,8 +64,8 @@ async def summarize_text(text_input, transcription_file):
     temperature = float(os.getenv('TEMPERATURE'))
     
     # Read transcription file asynchronously
-    async with aiofiles.open(transcription_file, mode='r') as f:
-        prompt = await f.read()
+    with open(transcription_file, mode='r') as f:
+        prompt = f.read()
 
     # Create model and generate content
     system_prompt = gen_string(system_message_l)

@@ -243,6 +243,8 @@ class VideoSummarizer:
 
                 if model_name == 'gemini':
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
+                    with open(transcription_file, "r") as f:
+                        transcription_text = f.read()
                     load_api_model()
                     sys_message = gen_string(system_message_l)
                     summary = summarize_text(text_input=transcription_text, transcription_file=transcription_file)
@@ -262,16 +264,12 @@ class VideoSummarizer:
 #                clean_vram()        
 
                 if model_name == 'gemini':
-                    wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                     sys_message = gen_string(system_message_l)
-                    audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
                     load_api_model()
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                     transcription = asyncio.run(transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file))
                     summary = asyncio.run(summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}"))
                 else:
-                    wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
-                    audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'
                     load_api_model()
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                     transcription = transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file)
