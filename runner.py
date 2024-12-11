@@ -42,7 +42,7 @@ def clean_output_folders():
     for folder in folders:
         files = glob.glob(folder+'/*')
         for f in files:
-        os.remove(f)
+            os.remove(f)
 
 def main():
     # Run the scripts in parallel
