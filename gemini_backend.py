@@ -58,6 +58,7 @@ def transcribe_audio(audio_file_name, transcription_file):
     genai_audio_file = genai.upload_file(path=f"{audio_file_name}")
     if not api_key or not genai_audio_file:
         raise ValueError("API key or file is missing for Gemini model.")
+        print("API key or file is missing for Gemini model.")
     # Create the prompt.
     transcribe_prompt = "Generate a transcript of the speech."
     # Pass the prompt and the audio file to Gemini.

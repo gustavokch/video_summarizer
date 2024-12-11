@@ -51,7 +51,7 @@ def index():
             return jsonify({
                 'summary': summary,
                 'transcription': transcription,
-                'success': True
+                'success': True 
             })
 
         except Exception as e:
