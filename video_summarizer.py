@@ -206,7 +206,7 @@ class VideoSummarizer:
             raise Exception(f"Summarization failed: {e}")
 
     
-    def process_video(self, video_url: str, model_name: str, transcription_model: str) -> Tuple[str, str]:
+    def process_video(self, video_url: str, model_name: str, transcription_model: str) -> Tuple[str, str, str]:
         """
         Comprehensive method to process a video from URL to summary
         
