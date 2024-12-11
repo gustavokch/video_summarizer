@@ -23,6 +23,7 @@ def index():
             # Get video URL and selected model
             video_url = request.form.get('video_url', '').strip()
             selected_model = request.form.get('model', AVAILABLE_MODELS[0])
+            transcription_model = request.form.get('transcription_model')
 
             if not video_url:
                 return jsonify({
@@ -35,7 +36,8 @@ def index():
             # Process the video
             transcription_file, summary = summarizer.process_video(
                 video_url, 
-                model_name=selected_model
+                model_name=selected_model,
+                transcription_model=transcription_model
             )
 
             # Read transcription and summary

@@ -206,7 +206,7 @@ class VideoSummarizer:
             raise Exception(f"Summarization failed: {e}")
 
     
-    def process_video(self, video_url: str, model_name: str) -> Tuple[str, str]:
+    def process_video(self, video_url: str, model_name: str, transcription_model: str) -> Tuple[str, str]:
         """
         Comprehensive method to process a video from URL to summary
         
@@ -221,7 +221,7 @@ class VideoSummarizer:
             # Download audio
             audio_file = self.download_audio(video_url)
             
-            if model_name != 'gemini':
+            if transcription_model != 'gemini':
 
                 # Convert to WAV
                 wav_file = self.convert_to_wav(audio_file)
@@ -240,8 +240,9 @@ class VideoSummarizer:
                 
                 return transcription_file, summary
             
-            if model_name == 'gemini':
-
+            if transcription_model == 'gemini':
+                wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
+                audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'                
             # Convert to WAV
 
                 # Transcribe
@@ -256,8 +257,18 @@ class VideoSummarizer:
                 transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                 transcription = transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file)
                 sys_message = gen_string(system_message_l)
-#                summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
+                summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
 
+#                
+            if transcription_model != 'gemini':
+                # Convert to WAV
+                wav_file = self.convert_to_wav(audio_file)
+                
+                # Transcribe
+                transcription_file = self.transcribe_audio(wav_file)
+                gc.collect()
+                torch.cuda.empty_cache()   
+                clean_vram()         
                 # Read transcription
                 with open(transcription_file, "r") as f:
                     transcription_text = f.read()

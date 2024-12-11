@@ -42,7 +42,6 @@ def summarize_text(text_input, transcription_file):
     with open(transcription_file) as f:
         prompt = f.read()
 
-    print("Gemini System Prompt: "+prompt)
     model = genai.GenerativeModel(system_instruction=system_prompt, model_name='models/gemini-1.5-pro-latest')
     response = model.generate_content(prompt, generation_config=genai.GenerationConfig(
         max_output_tokens=8192,

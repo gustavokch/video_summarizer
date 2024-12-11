@@ -39,6 +39,20 @@
                     <option value="qwen-summarizer">Qwen Summarizer</option>
                 </select>
             </div>
+
+            <div class="mb-4">
+                <label for="model" class="block text-gray-700 font-bold mb-2">
+                    Transcription Model
+                </label>
+                <select 
+                    id="transcription_model" 
+                    name="transcription_model" 
+                    class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                    <option value="gemini">Gemini 1.5</option>
+                    <option value="whisper">Whisper-large-v3-turbo</option>
+                </select>
+            </div>
             
             <button 
                 type="submit" 
