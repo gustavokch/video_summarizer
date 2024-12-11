@@ -47,12 +47,6 @@ def clean_output_folders():
             os.remove(f)
             print("removed "+f)
 
-
-def write_api_key():
-    api_key = str('GOOGLE_API_KEY'+'"'+userdata.get('GOOGLE_API_KEY')+'"')
-    with open("./api_key", "w") as f:
-        f.write("GOOGLE_API_KEY="+{api_key}+str('"'))
-
 def main():
     # Run the scripts in parallel
     files = ['/content/cloudflared.log',
@@ -62,7 +56,6 @@ def main():
         if os.path.isfile(f):
             os.remove(f)
     clean_output_folders()
-    write_api_key()
     backend = os.environ.get("BACKEND")
     p1 = run_script_no_stdout('ollama_server.py')  # No stdout for this script
     p2 = run_script_no_stdout('log_watchdog.py')  # No stdout for this script
