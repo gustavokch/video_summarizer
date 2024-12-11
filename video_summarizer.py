@@ -257,8 +257,6 @@ class VideoSummarizer:
             if transcription_model == 'gemini':
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'                
-                with open(transcription_file, "r") as f:
-                    transcription_text = f.read()   
                 if model_name == 'gemini':
                     sys_message = gen_string(system_message_l)
                     load_api_model()
