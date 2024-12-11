@@ -22,8 +22,8 @@ def index():
         try:
             # Get video URL and selected model
             video_url = request.form.get('video_url', '').strip()
-            selected_model = request.form.get('model', AVAILABLE_MODELS[0])
-            transcription_model = request.form.get('transcription_model')
+            selected_model = request.form.get('model', 'qwen2.5:7b-instruct-q4_K_M-summarizer')
+            transcription_model = request.form.get('transcription_model', 'whisper')
 
             if not video_url:
                 return jsonify({
