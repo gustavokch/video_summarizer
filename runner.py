@@ -40,9 +40,10 @@ def clean_output_folders():
                 "/tmp/summaries",
                 "./modelfiles"]
     for folder in folders:
+        print('folder '+str(folder))
         files = glob.glob(folder+'/*')
         for f in files:
-            os.remove(f)
+            #os.remove(f)
             print("removed "+f)
 
 def main():
