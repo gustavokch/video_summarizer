@@ -12,6 +12,7 @@ from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file, gen_string
 from gemini_backend import summarize_audio, load_api_model, transcribe_audio, summarize_text
 from dotenv import load_dotenv
+from runner import clean_output_folders
 
 class VideoSummarizer:
     """
@@ -222,6 +223,7 @@ class VideoSummarizer:
         """
         try:
             # Download audio
+            clean_output_folders()
             audio_file = self.download_audio(video_url)
             print("Transcription model: "+str(transcription_model))
             print("Summarization model: "+str(model_name))    
@@ -276,10 +278,7 @@ class VideoSummarizer:
                 with open(summary_file, "w") as f:
                     f.write(summary)
             
-                return transcription_file, summary
-#                
-
-
+                return transcription_file, summary           
 
         except Exception as e:
             raise Exception(f"Video processing failed: {e}")
