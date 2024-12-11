@@ -257,14 +257,6 @@ class VideoSummarizer:
             if transcription_model == 'gemini':
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'                
-            # Convert to WAV
-
-                # Transcribe
-#                t_wav_file = self.convert_to_wav(audio_file, sample_rate=16000, codec='wav')
-#                transcription_file = self.transcribe_audio(t_wav_file)
-#                gc.collect()
-#                torch.cuda.empty_cache()   
-#                clean_vram()        
 
                 if model_name == 'gemini':
                     sys_message = gen_string(system_message_l)
@@ -275,13 +267,15 @@ class VideoSummarizer:
                 else:
                     load_api_model()
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
-                    transcription = transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file)
+                    transcription = asyncio.run(transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file))
 
                     with open(transcription_file, "r") as f:
                         transcription_text = f.read()                   
                         summary = self.summarize_text(transcription_text, model_name)
-
-
+                summary_file = os.path.join(self.summary_dir, 'summary.txt')
+                with open(summary_file, "w") as f:
+                    f.write(summary)
+            
                 return transcription_file, summary
 #                
 
