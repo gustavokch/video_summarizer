@@ -80,4 +80,5 @@ def main():
         observer.join()
 
 if __name__ == '__main__':
+    clean_output_folders()
     main()
