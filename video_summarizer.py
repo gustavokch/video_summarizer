@@ -192,7 +192,7 @@ class VideoSummarizer:
         
             # Use Ollama's Python API to generate the summary
             client = ollama.Client()
-            response = client.generate(model=model_name, system=sys_message, prompt=input_text)
+            response = client.generate(model=model_name, prompt=input_text, system=sys_message)
             
             if not response or not response.response:
                 raise Exception("No response from Ollama API.")
