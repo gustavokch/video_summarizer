@@ -247,7 +247,7 @@ class VideoSummarizer:
                         transcription_text = f.read()
                     load_api_model()
                     sys_message = gen_string(system_message_l)
-                    summary = summarize_text(text_input=transcription_text, transcription_file=transcription_file)
+                    summary = asyncio.run(summarize_text(text_input=transcription_text, transcription_file=transcription_file))
 
                 return transcription_file, summary
             
