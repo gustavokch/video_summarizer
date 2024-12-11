@@ -238,8 +238,11 @@ class VideoSummarizer:
                 # Summarize
                 if model_name != 'gemini':
                     summary = self.summarize_text(transcription_text, model_name)
+                    
                 if model_name == 'gemini':
+                    transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                     load_api_model()
+                    sys_message = gen_string(system_message_l)
                     summary = summarize_text(text_input=transcription_text, transcription_file=transcription_file)
 
                 return transcription_file, summary
