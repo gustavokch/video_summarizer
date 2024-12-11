@@ -220,7 +220,8 @@ class VideoSummarizer:
         try:
             # Download audio
             audio_file = self.download_audio(video_url)
-            
+            print("Transcription model: "+str(transcription_model))
+            print("Summarization model: "+str(model_name))    
             if transcription_model != 'gemini':
 
                 # Convert to WAV
@@ -238,7 +239,7 @@ class VideoSummarizer:
                 # Summarize
                 if model_name != 'gemini':
                     summary = self.summarize_text(transcription_text, model_name)
-                    
+
                 if model_name == 'gemini':
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                     load_api_model()
