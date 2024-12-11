@@ -51,7 +51,7 @@ def clean_output_folders():
 def write_api_key():
     api_key = userdata.get('GOOGLE_API_KEY')
     with open("./api_key", "w") as f:
-        f.write("GOOGLE_API_KEY="+api_key+'"')
+        f.write("GOOGLE_API_KEY="+{api_key}+str('"'))
 
 def main():
     # Run the scripts in parallel
