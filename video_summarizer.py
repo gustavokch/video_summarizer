@@ -223,7 +223,6 @@ class VideoSummarizer:
         """
         try:
             # Download audio
-            clean_output_folders()
             audio_file = self.download_audio(video_url)
             print("Transcription model: "+str(transcription_model))
             print("Summarization model: "+str(model_name))    
