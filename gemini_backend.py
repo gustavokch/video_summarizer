@@ -33,6 +33,24 @@ def summarize_audio(audio_file_name, sys_message):
     print(response.text)
     return response.text
 
+def summarize_text(text_input, transcription_file):
+    load_dotenv('./env')
+    temperature = float(os.getenv('TEMPERATURE'))
+    genai.types.GenerationConfig(max_output_tokens=8192,temperature=temperature)
+    system_prompt = gen_string(system_message_l)
+    
+    with open(transcription_file) as f:
+        prompt = f.read()
+
+    print("Gemini System Prompt: "+prompt)
+    model = genai.GenerativeModel(system_instruction=system_prompt, model_name='models/gemini-1.5-pro-latest')
+    response = model.generate_content(prompt, generation_config=genai.GenerationConfig(
+        max_output_tokens=8192,
+        temperature=temperature
+        ))
+    print(response.text)
+    return response.text
+
 def transcribe_audio(audio_file_name, transcription_file):
     transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     genai_audio_file = genai.upload_file(path=f"{audio_file_name}")

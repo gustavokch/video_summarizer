@@ -9,7 +9,7 @@ from faster_whisper import WhisperModel, BatchedInferencePipeline
 import google.generativeai as genai
 from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file, gen_string
-from gemini_backend import summarize_audio, load_api_model, transcribe_audio
+from gemini_backend import summarize_audio, load_api_model, transcribe_audio, summarize_text
 from dotenv import load_dotenv
 
 class VideoSummarizer:
@@ -256,11 +256,12 @@ class VideoSummarizer:
                 transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                 transcription = transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file)
                 sys_message = gen_string(system_message_l)
-                summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
+#                summary = summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}")
+
                 # Read transcription
                 with open(transcription_file, "r") as f:
                     transcription_text = f.read()
-                
+                summary = summarize_text(text_input=transcription_text,transcription_file=transcription_file)         
                 
                 return transcription_file, summary
 
