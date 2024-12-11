@@ -188,8 +188,7 @@ class VideoSummarizer:
             # Optional: Clean up GPU memory if applicable
             gc.collect()
             clean_vram()
-            if sys_message == "":
-                sys_message = gen_string(system_message_l)
+            sys_message = gen_string(system_message_l)
         
             # Use Ollama's Python API to generate the summary
             client = ollama.Client()
