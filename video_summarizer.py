@@ -261,17 +261,22 @@ class VideoSummarizer:
                     sys_message = gen_string(system_message_l)
                     load_api_model()
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
-                    transcription = asyncio.run(transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file))
-                    summary = asyncio.run(summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}"))
+                    with open(transcription_file, 'w') as f:  
+                        transcription = asyncio.run(transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file))
+                        f.write(transcription)
+                    summary_file = os.path.join(self.summary_dir, 'summary.txt')
+                    with open(summary_file, "w") as f:
+                        summary = asyncio.run(summarize_audio(sys_message=sys_message, audio_file_name=f"{audio_file_name}"))
+                        f.write(summary)
                 else:
                     load_api_model()
                     transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
                     transcription = asyncio.run(transcribe_audio(audio_file_name=f"{audio_file_name}",transcription_file=transcription_file))
                     summary = self.summarize_text(transcription_text, model_name)
-                summary_file = os.path.join(self.summary_dir, 'summary.txt')
-                with open(summary_file, "w") as f:
-                    f.write(summary)
-            
+                    summary_file = os.path.join(self.summary_dir, 'summary.txt')
+                    with open(summary_file, "w") as f:
+                        f.write(summary)
+                
                 return transcription_file, summary           
 
         except Exception as e:
