@@ -3,6 +3,7 @@ import os
 import sys
 import time
 import glob
+from google.colab import userdata
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from templates import gen_ollama_models
@@ -48,9 +49,9 @@ def clean_output_folders():
 
 
 def write_api_key():
-    api_key = os.environ["GOOGLE_API_KEY"]
+    api_key = userdata.get('GOOGLE_API_KEY')
     with open("./api_key", "w") as f:
-        f.write(api_key)
+        f.write("GOOGLE_API_KEY="+api_key+'"')
 
 def main():
     # Run the scripts in parallel
