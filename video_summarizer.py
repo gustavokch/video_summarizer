@@ -171,7 +171,7 @@ class VideoSummarizer:
         except Exception as e:
             raise Exception(f"Transcription failed: {e}")
     
-    def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored") -> str:
+    def summarize_text(self, input_text: str, model_name: str = "artifish/llama3.2-uncensored", sys_message: str = "") -> str:
         """
         Summarize text using Ollama
         
@@ -187,10 +187,12 @@ class VideoSummarizer:
             # Optional: Clean up GPU memory if applicable
             gc.collect()
             clean_vram()
-
+            if sys_message == "":
+                sys_message = gen_string(system_message_l)
+        
             # Use Ollama's Python API to generate the summary
             client = ollama.Client()
-            response = client.generate(model=model_name, prompt=input_text)
+            response = client.generate(model=model_name, system=sys_message, prompt=input_text)
             
             if not response or not response.response:
                 raise Exception("No response from Ollama API.")
@@ -239,6 +241,7 @@ class VideoSummarizer:
                 
                 # Summarize
                 if model_name != 'gemini':
+                    sys_message = gen_string(system_message_l)
                     summary = self.summarize_text(transcription_text, model_name)
 
                 if model_name == 'gemini':
