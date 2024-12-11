@@ -239,7 +239,7 @@ class VideoSummarizer:
                 if model_name != 'gemini':
                     summary = self.summarize_text(transcription_text, model_name)
                 if model_name == 'gemini':
-                    sys_message = gen_string(system_message_l)
+                    load_api_model()
                     summary = summarize_text(text_input=transcription_text, transcription_file=transcription_file)
 
                 return transcription_file, summary
