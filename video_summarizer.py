@@ -267,26 +267,23 @@ class VideoSummarizer:
                     sys_message = gen_string(system_message_l)
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + " Transcription file: "+str(transcription_file))
-                    transcription = asyncio.run(transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file))  # Awaiting coroutine
+                    transcription = asyncio.to_thread(transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file))  # Awaiting coroutine
                     print(f"Summarizing audio file={audio_file_name} with model_name={model_name} and transcription_model={transcription_model}")
                     summary = asyncio.run(summarize_audio(audio_file_name=audio_file_name, sys_message=sys_message))  # Awaiting coroutine
                     print("Summary: " + summary)
                     summary_file = os.path.join(self.summary_dir, 'summary.txt')
                     with open(summary_file, "w") as s_f:
                         s_f.write(summary)  # Write resolved string
-                    with open(transcription_file, 'w') as t_f: 
-                        t_f.write(transcription)  # Write resolved string   
                 else:
                     api_key = load_api_model()
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     transcription = transcribe_audio(audio_file_name=audio_file_name,transcription_file=transcription_file)
-                    with open(transcription_file, 'r') as f_t:
-                        transcription_text = f_t.read()  
+                    with open(transcription_file, 'r') as f:  
                         summary = self.summarize_text(transcription_text, model_name)
                         print(summary)
                         summary_file = os.path.join(self.summary_dir, 'summary.txt')
-                        with open(summary_file, "w") as f_s:
-                            f_s.write(summary)
+                        with open(summary_file, "w") as f:
+                            f.write(summary)
                     
                 return transcription_file, summary           
 
