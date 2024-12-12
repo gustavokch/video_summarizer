@@ -144,7 +144,7 @@ class VideoSummarizer:
             segments, info = self.batched_model.transcribe(audio_file, batch_size=8)
 
             print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
-            transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
+            transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
             gc.collect()
             torch.cuda.empty_cache()
             gc.collect()
@@ -260,7 +260,7 @@ class VideoSummarizer:
                 if model_name == 'gemini':
                     sys_message = gen_string(system_message_l)
                     load_api_model()
-                    transcription_file = os.path.join(self.transcription_dir, os.path.splitext(audio_file)[0] + '_44khz.mp3' + '.txt')
+                    transcription_file = os.path.join("/tmp/transcriptions", os.path.splitext(audio_file)[0] + '_44khz.mp3' + '.txt')
                     with open(transcription_file, 'w') as f:  
                         print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + "Transcription file: "+str(transcription_file))
                         transcription = transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file)  # Awaiting coroutine
@@ -273,7 +273,7 @@ class VideoSummarizer:
                         f.write(summary)  # Write resolved string
                 else:
                     load_api_model()
-                    transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
+                    transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     transcription = transcribe_audio(audio_file_name=audio_file_name,transcription_file=transcription_file)
                     with open(transcription_file, 'r') as f:  
                         summary = self.summarize_text(transcription_text, model_name)
