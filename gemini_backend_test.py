@@ -25,7 +25,7 @@ async def summarize_audio_async(audio_file_name, sys_message):
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
     genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
-    generation_config = genai.GenerationConfig(max_output_tokens=32768, temperature=temperature)
+    generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
     system_prompt = gen_string(system_message_l)
     prompt = system_prompt
     print("Gemini System Prompt: " + prompt)
@@ -40,7 +40,7 @@ async def summarize_text_async(text_input, transcription_file):
     load_api_model()
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
-    generation_config = genai.GenerationConfig(max_output_tokens=32768, temperature=temperature)
+    generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
     system_prompt = gen_string(system_message_l)
 
     async with aiofiles.open(transcription_file, 'r') as f:
