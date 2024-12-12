@@ -53,7 +53,7 @@ async def summarize_text_async(text_input, transcription_file):
     return response.text
 
 async def transcribe_audio_async(audio_file_name, transcription_file):
-    load_api_model()
+    api_key = load_api_model()
     temperature = float(0.1)
     generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
 
