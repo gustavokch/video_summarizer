@@ -3,7 +3,7 @@ import asyncio
 import aiofiles
 from dotenv import load_dotenv
 import google.generativeai as genai
-from templates import gen_string, system_message_l
+from templates import gen_string, system_message_l, gemini_message_l
 
 def load_api_model():
   if len(os.getenv('READ_API_KEY')) < 5:
@@ -26,7 +26,7 @@ async def summarize_audio_async(audio_file_name, sys_message):
     temperature = float(os.getenv('TEMPERATURE'))
     genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
     generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
-    system_prompt = gen_string(system_message_l)
+    system_prompt = gen_string(gemini_message_l)
     prompt = system_prompt
     print("Gemini System Prompt: " + prompt)
 
