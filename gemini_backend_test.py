@@ -30,7 +30,7 @@ async def summarize_audio_async(audio_file_name, sys_message):
     prompt = system_prompt
     print("Gemini System Prompt: " + prompt)
 
-    model = genai.GenerativeModel(system_instruction=prompt, model_name='models/gemini-1.5-pro-latest')
+    model = genai.GenerativeModel(system_instruction=prompt, model_name='models/gemini-2.0-flash-exp')
     response = await asyncio.to_thread(model.generate_content, [prompt, genai_file], generation_config=generation_config)
 
     print(response.text)
