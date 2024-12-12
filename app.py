@@ -43,10 +43,11 @@ def index():
             # Read transcription and summary
             with open(transcription_file, 'r') as f:
                 transcription = f.read()
-            summary_dir="/tmp/summaries"
-            summary_file = os.path.join(summary_dir, 'summary.txt')
-            with open(summary_file, 'r') as s_f:
-                summary = s_f.read()
+            if not summary:
+                summary_dir="/tmp/summaries"
+                summary_file = os.path.join(summary_dir, 'summary.txt')
+                with open(summary_file, 'r') as s_f:
+                    summary = s_f.read()
 
             return jsonify({
                 'summary': summary,
