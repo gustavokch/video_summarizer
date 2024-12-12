@@ -279,7 +279,7 @@ class VideoSummarizer:
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     transcription = asyncio.run(transcribe_audio_async(audio_file_name=audio_file_name,transcription_file=transcription_file))
                     with open(transcription_file, 'r') as f_t:  
-                        f_t.write(transcription.text)
+                        f_t.write(transcription)
                     summary = self.summarize_text(transcription_text, model_name)
                     print(summary)
                     summary_file = os.path.join(self.summary_dir, 'summary.txt')
