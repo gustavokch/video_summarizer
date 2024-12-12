@@ -10,7 +10,8 @@ from faster_whisper import WhisperModel, BatchedInferencePipeline
 import google.generativeai as genai
 from vram_mgmt import clean_vram
 from templates import generate_modelfile, create_model_from_file, gen_string, system_message_l
-from gemini_backend import summarize_audio, load_api_model, transcribe_audio, summarize_text
+from gemini_backend_test import summarize_audio, load_api_model, transcribe_audio, summarize_text, transcribe_audio_async, summarize_audio_async
+#from gemini_backend import summarize_audio, load_api_model, transcribe_audio, summarize_text
 from dotenv import load_dotenv
 from runner import clean_output_folders
 
@@ -263,12 +264,12 @@ class VideoSummarizer:
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     with open(transcription_file, 'w') as f:  
                         print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + " Transcription file: "+str(transcription_file))
-                        transcription = transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file)  # Awaiting coroutine
+                        transcription = asyncio.run(transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file))  # Awaiting coroutine
                         f.write(transcription)  # Write resolved string
                     summary_file = os.path.join(self.summary_dir, 'summary.txt')
                     with open(summary_file, "w") as f:
                         print(f"Summarizing audio file={audio_file_name} with model_name={model_name} and transcription_model={transcription_model}")
-                        summary = summarize_audio(sys_message=sys_message, audio_file_name=audio_file_name)  # Awaiting coroutine
+                        summary = asyncio.run(summarize_audio(sys_message=sys_message, audio_file_name=audio_file_name))  # Awaiting coroutine
                         print("Summary: " + summary)
                         f.write(summary)  # Write resolved string
                 else:

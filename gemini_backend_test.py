@@ -1,7 +1,6 @@
 import os
 import asyncio
 import aiofiles
-import aiogoogle
 from dotenv import load_dotenv
 import google.generativeai as genai
 from templates import gen_string, system_message_l
@@ -18,109 +17,65 @@ def load_api_model():
   else:
         genai.configure(api_key=api_key)
 
-async def async_upload_file(file_path):
-    """Asynchronously upload a file using Google's GenAI."""
-    loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(None, genai.upload_file, file_path)
-
-async def summarize_audio(audio_file_name, sys_message):
-    """Asynchronously summarize an audio file."""
+async def summarize_audio_async(audio_file_name, sys_message):
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
-    
-    # Upload file asynchronously
-    genai_file = await async_upload_file(audio_file_name)
-    
-    # Prepare system prompt
+    genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
+    generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
     system_prompt = gen_string(system_message_l)
     prompt = system_prompt
-    print(f"Gemini System Prompt: {prompt}")
-    
-    # Create model and generate content
-    model = genai.GenerativeModel(
-        system_instruction=prompt, 
-        model_name='models/gemini-1.5-pro-latest'
-    )
-    
-    # Run generation in executor to avoid blocking
-    loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(
-        None, 
-        lambda: model.generate_content(
-            [prompt, genai_file], 
-            generation_config=genai.GenerationConfig(
-                max_output_tokens=8192,
-                temperature=temperature
-            )
-        )
-    )
-    
-    print(response.text)
-    return response
+    print("Gemini System Prompt: " + prompt)
 
-async def summarize_text(text_input, transcription_file):
-    """Asynchronously summarize text from a file."""
-    load_dotenv('./env')
-    temperature = float(os.getenv('TEMPERATURE'))
-    
-    # Read transcription file asynchronously
-    with open(transcription_file, mode='r') as f:
-        prompt = f.read()
+    model = genai.GenerativeModel(system_instruction=prompt, model_name='models/gemini-1.5-pro-latest')
+    response = await asyncio.to_thread(model.generate_content, [prompt, genai_file], generation_config=generation_config)
 
-    # Create model and generate content
-    system_prompt = gen_string(system_message_l)
-    model = genai.GenerativeModel(
-        system_instruction=system_prompt, 
-        model_name='models/gemini-1.5-pro-latest'
-    )
-    
-    # Run generation in executor to avoid blocking
-    loop = asyncio.get_event_loop()
-    response = await loop.run_in_executor(
-        None, 
-        lambda: model.generate_content(
-            prompt, 
-            generation_config=genai.GenerationConfig(
-                max_output_tokens=8192,
-                temperature=temperature
-            )
-        )
-    )
-    
     print(response.text)
     return response.text
 
-async def transcribe_audio(audio_file_name, transcription_file):
-    """Asynchronously transcribe an audio file."""
-    # Upload file asynchronously
-    genai_audio_file = await async_upload_file(audio_file_name)
-    
-    # Create transcription model
+async def summarize_text_async(text_input, transcription_file):
+    load_api_model()
+    load_dotenv('./env')
+    temperature = float(os.getenv('TEMPERATURE'))
+    generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
+    system_prompt = gen_string(system_message_l)
+
+    async with aiofiles.open(transcription_file, 'r') as f:
+        prompt = await f.read()
+
+    model = genai.GenerativeModel(system_instruction=system_prompt, model_name='models/gemini-1.5-pro-latest')
+    response = await asyncio.to_thread(model.generate_content, prompt, generation_config=generation_config)
+
+    print(response.text)
+    return response.text
+
+async def transcribe_audio_async(audio_file_name, transcription_file):
+    api_key = load_api_model()
+    temperature = float(0.1)
+    generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
+
     transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
+
+    if not api_key or not genai_file:
+        raise ValueError("API key or file is missing for Gemini model.")
+
     transcribe_prompt = "Generate a transcript of the speech."
-    
-    # Run transcription in executor
-    loop = asyncio.get_event_loop()
-    transcription = await loop.run_in_executor(
-        None, 
-        lambda: transcribe_model.generate_content([transcribe_prompt, genai_audio_file])
-    )
-    
-    # Write transcription file asynchronously
-    async with aiofiles.open(transcription_file, mode='w') as f:
-        await f.write(str(transcription.text))
-    
+    print("Running Gemini Transcription")
+
+    transcription = await asyncio.to_thread(transcribe_model.generate_content, [transcribe_prompt, genai_file])
+
     print(transcription.text)
+
+    async with aiofiles.open(transcription_file, "w") as f:
+        await f.write(transcription.text)
+
     return transcription.text
 
-# Example of how to call these async functions
-async def main():
-    await load_api_model()
-    
-    # Example usage with async calls
-    audio_summary = await summarize_audio('example.mp3', 'system_message')
-    text_summary = await summarize_text('input_text', 'transcription.txt')
-    transcription = await transcribe_audio('audio.mp3', 'output_transcript.txt')
+def summarize_audio(audio_file_name, sys_message):
+    return asyncio.run(summarize_audio_async(audio_file_name, sys_message))
 
-if __name__ == '__main__':
-    main()
+def summarize_text(text_input, transcription_file):
+    return asyncio.run(summarize_text_async(text_input, transcription_file))
+
+def transcribe_audio(audio_file_name, transcription_file):
+    return asyncio.run(transcribe_audio_async(audio_file_name, transcription_file))
