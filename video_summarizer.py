@@ -256,11 +256,12 @@ class VideoSummarizer:
                 return transcription_file, summary
             
             if transcription_model == 'gemini':
+                load_api_model()
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'                
                 if model_name == 'gemini':
-                    sys_message = gen_string(system_message_l)
                     load_api_model()
+                    sys_message = gen_string(system_message_l)
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     with open(transcription_file, 'w') as f:  
                         print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + " Transcription file: "+str(transcription_file))
