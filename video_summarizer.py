@@ -282,10 +282,7 @@ class VideoSummarizer:
                         f_t.write(transcription)
                     summary = self.summarize_text(transcription_text, model_name)
                     print(summary)
-                    summary_file = os.path.join(self.summary_dir, 'summary.txt')
-                    with open(summary_file, "w") as f_s:
-                        f_s.write(summary)
-                    
+                  
                 return transcription_file, summary           
 
         except Exception as e:
