@@ -18,6 +18,7 @@ def load_api_model():
         genai.configure(api_key=api_key)
 
 async def summarize_audio_async(audio_file_name, sys_message):
+    load_api_model()
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
     genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
@@ -49,7 +50,7 @@ async def summarize_text_async(text_input, transcription_file):
     return response.text
 
 async def transcribe_audio_async(audio_file_name, transcription_file):
-    api_key = load_api_model()
+    load_api_model()
     temperature = float(0.1)
     generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
 
