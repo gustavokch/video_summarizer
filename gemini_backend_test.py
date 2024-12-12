@@ -11,11 +11,11 @@ def load_api_model():
       api_key = str(os.getenv('GOOGLE_API_KEY'))
   else:
       api_key = str(os.getenv('READ_API_KEY'))
+  genai.configure(api_key=api_key)
   if api_key == "":
         print("No Google API key set.")
         return None
-  else:
-        genai.configure(api_key=api_key)
+
 
 async def summarize_audio_async(audio_file_name, sys_message):
     load_api_model()
