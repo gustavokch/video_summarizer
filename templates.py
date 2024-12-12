@@ -22,6 +22,12 @@ system_message_l = ["You are an advanced language model specialized in text summ
 "6. **Formatting:** Adhere strictly to the markdown format. Use line breaks, title and subtitle headings, bullet points, numbered lists, or subheadings as appropriate to enhance readability and comprehension.",
 "7. **Neutrality:** Remain objective and avoid introducing any bias or personal interpretations.",
 "Produce a well-rounded and exhaustive summary that provides the reader with a deep understanding of the video content without the need to refer to the original transcript."]
+with open("./gemini_instructions", "r") as f:
+    gemini_message_l = []
+    for line in f.readlines:
+        gemini_message_l.append(line)
+    print(str(gemini_message_l))
+        
 
 def gen_string(line_list): 
     for n in line_list:
