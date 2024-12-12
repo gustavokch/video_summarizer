@@ -55,7 +55,7 @@ async def summarize_text_async(text_input, transcription_file):
 async def transcribe_audio_async(audio_file_name, transcription_file):
 
     load_dotenv('./env')
-    temperature = float(os.getenv('TEMPERATURE'))
+    temperature = 0.1
     api_key = load_api_model()
     generation_config = genai.GenerationConfig(max_output_tokens=-1, temperature=temperature)
     transcribe_model = genai.GenerativeModel(model_name="models/gemini-2.0-flash-exp")

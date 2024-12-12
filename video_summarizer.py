@@ -277,13 +277,14 @@ class VideoSummarizer:
                 else:
                     api_key = load_api_model()
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
-                    transcription = transcribe_audio(audio_file_name=audio_file_name,transcription_file=transcription_file)
-                    with open(transcription_file, 'r') as f:  
-                        summary = self.summarize_text(transcription_text, model_name)
-                        print(summary)
-                        summary_file = os.path.join(self.summary_dir, 'summary.txt')
-                        with open(summary_file, "w") as f:
-                            f.write(summary)
+                    transcription = asyncio.run(transcribe_audio_async(audio_file_name=audio_file_name,transcription_file=transcription_file))
+                    with open(transcription_file, 'r') as f_t:  
+                        f_t.write(transcription.text)
+                    summary = self.summarize_text(transcription_text, model_name)
+                    print(summary)
+                    summary_file = os.path.join(self.summary_dir, 'summary.txt')
+                    with open(summary_file, "w") as f_s:
+                        f_s.write(summary)
                     
                 return transcription_file, summary           
 
