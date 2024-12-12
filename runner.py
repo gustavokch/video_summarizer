@@ -3,7 +3,6 @@ import os
 import sys
 import time
 import glob
-from google.colab import userdata
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from templates import gen_ollama_models

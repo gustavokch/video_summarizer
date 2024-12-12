@@ -70,12 +70,12 @@ async def transcribe_audio_async(audio_file_name, transcription_file):
 
     transcription = await asyncio.to_thread(transcribe_model.generate_content, [transcribe_prompt, genai_file])
 
-    print(transcription.text)
+    print(transcription)
 
     async with aiofiles.open(transcription_file, "w") as f:
-        await f.write(transcription.text)
+        await f.write(transcription)
 
-    return transcription.text
+    return transcription
 
 def summarize_audio(audio_file_name, sys_message):
     return asyncio.run(summarize_audio_async(audio_file_name, sys_message))

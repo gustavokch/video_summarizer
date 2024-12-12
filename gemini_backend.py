@@ -1,6 +1,4 @@
 import os
-import subprocess
-import ollama
 from dotenv import load_dotenv
 import google.generativeai as genai
 from templates import gen_string, system_message_l
