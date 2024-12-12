@@ -9,9 +9,12 @@ def load_api_model():
   if len(os.getenv('READ_API_KEY')) < 5:
       load_dotenv('./api_key')
       api_key = str(os.getenv('GOOGLE_API_KEY'))
+      genai.configure(api_key=api_key)
+      return api_key
   else:
       api_key = str(os.getenv('READ_API_KEY'))
-  genai.configure(api_key=api_key)
+      genai.configure(api_key=api_key)
+      return api_key
   if api_key == "":
         print("No Google API key set.")
         return None

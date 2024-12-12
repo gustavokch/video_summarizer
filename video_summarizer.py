@@ -249,18 +249,18 @@ class VideoSummarizer:
                 if model_name == 'gemini':
                     with open(transcription_file, "r") as f:
                         transcription_text = f.read()
-                        load_api_model()
+                        api_key = load_api_model()
                         sys_message = gen_string(system_message_l)
                         summary = summarize_text(text_input=transcription_text, transcription_file=transcription_file)
 
                 return transcription_file, summary
             
             if transcription_model == 'gemini':
-                load_api_model()
+                api_key = load_api_model()
                 wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
                 audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'                
                 if model_name == 'gemini':
-                    load_api_model()
+                    api_key = load_api_model()
                     sys_message = gen_string(system_message_l)
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     with open(transcription_file, 'w') as f:  
@@ -274,7 +274,7 @@ class VideoSummarizer:
                         print("Summary: " + summary)
                         f.write(summary)  # Write resolved string
                 else:
-                    load_api_model()
+                    api_key = load_api_model()
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     transcription = transcribe_audio(audio_file_name=audio_file_name,transcription_file=transcription_file)
                     with open(transcription_file, 'r') as f:  
