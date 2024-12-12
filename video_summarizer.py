@@ -280,12 +280,13 @@ class VideoSummarizer:
                     api_key = load_api_model()
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     transcription = transcribe_audio(audio_file_name=audio_file_name,transcription_file=transcription_file)
-                    with open(transcription_file, 'r') as f:  
+                    with open(transcription_file, 'r') as f_t:
+                        transcription_text = f_t.read()  
                         summary = self.summarize_text(transcription_text, model_name)
                         print(summary)
                         summary_file = os.path.join(self.summary_dir, 'summary.txt')
-                        with open(summary_file, "w") as f:
-                            f.write(summary)
+                        with open(summary_file, "w") as f_s:
+                            f_s.write(summary)
                     
                 return transcription_file, summary           
 
