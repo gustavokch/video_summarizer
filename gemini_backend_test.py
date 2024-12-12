@@ -65,8 +65,9 @@ async def transcribe_audio_async(audio_file_name, transcription_file):
         raise ValueError("API key or file is missing for Gemini model.")
 
     transcribe_prompt = gen_string(gemini_message_l)
+    prompt = transcribe_prompt
     print("Running Gemini Transcription")
-    print("Prompt: "+str(transcribe_prompt))
+    print("Prompt: "+prompt)
     transcription = await asyncio.to_thread(transcribe_model.generate_content, [transcribe_prompt, genai_file])
 
     async with aiofiles.open(transcription_file, "w") as f:
