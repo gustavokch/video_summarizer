@@ -260,7 +260,7 @@ class VideoSummarizer:
                 if model_name == 'gemini':
                     sys_message = gen_string(system_message_l)
                     load_api_model()
-                    transcription_file = os.path.join(self.transcription_dir, os.path.basename(audio_file) + '.txt')
+                    transcription_file = os.path.join(self.transcription_dir, os.path.splitext(audio_file)[0] + '_44khz.mp3' + '.txt')
                     with open(transcription_file, 'w') as f:  
                         print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}")
                         transcription = transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file)  # Awaiting coroutine
