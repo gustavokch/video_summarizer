@@ -280,7 +280,7 @@ class VideoSummarizer:
                     transcription = asyncio.run(transcribe_audio_async(audio_file_name=audio_file_name,transcription_file=transcription_file))
                     with open(transcription_file, 'r') as f_t:  
                         transcription_text = str(f_t.read(transcription))
-                    summary = self.summarize_text(transcription_text, model_name)
+                    summary = self.summarize_text(input_text=transcription_text, model_name=model_name)
                     print(summary)
                   
                 return transcription_file, summary           
