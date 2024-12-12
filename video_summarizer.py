@@ -115,7 +115,12 @@ class VideoSummarizer:
             if sample_rate == 44100 and codec =='mp3':
                 output_file = os.path.splitext(input_file)[0] + '_44khz.mp3'
         
-        command = [
+        if codec == 'mp3':
+            command = [
+            'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', '-ab', '128k', output_file
+        ]            
+        else:
+            command = [
             'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', output_file
         ]
         subprocess.run(command, check=True)
