@@ -19,13 +19,13 @@ def summarize_audio(audio_file_name, sys_message):
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
     genai_file = genai.upload_file(path=f"{audio_file_name}")
-    genai.types.GenerationConfig(max_output_tokens=8192,temperature=temperature)
+    genai.types.GenerationConfig(max_output_tokens=32768,temperature=temperature)
     system_prompt = gen_string(system_message_l)
     prompt = system_prompt
     print("Gemini System Prompt: "+prompt)
     model = genai.GenerativeModel(system_instruction=prompt, model_name='models/gemini-1.5-pro-latest')
     response = model.generate_content([prompt, genai_file], generation_config=genai.GenerationConfig(
-        max_output_tokens=8192,
+        max_output_tokens=32768,
         temperature=temperature
         ))
     print(response.text)
@@ -35,7 +35,7 @@ def summarize_text(text_input, transcription_file):
     load_api_model()
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
-    genai.types.GenerationConfig(max_output_tokens=8192,temperature=temperature)
+    genai.types.GenerationConfig(max_output_tokens=32768,temperature=temperature)
     system_prompt = gen_string(system_message_l)
     
     with open(transcription_file) as f:
@@ -43,7 +43,7 @@ def summarize_text(text_input, transcription_file):
 
     model = genai.GenerativeModel(system_instruction=system_prompt, model_name='models/gemini-1.5-pro-latest')
     response = model.generate_content(prompt, generation_config=genai.GenerationConfig(
-        max_output_tokens=8192,
+        max_output_tokens=32768,
         temperature=temperature
         ))
     print(response.text)
@@ -52,7 +52,7 @@ def summarize_text(text_input, transcription_file):
 def transcribe_audio(audio_file_name, transcription_file):
     api_key = load_api_model()
     temperature = float(0.1)
-    genai.types.GenerationConfig(max_output_tokens=8192,temperature=temperature)
+    genai.types.GenerationConfig(max_output_tokens=32768,temperature=temperature)
     transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
     genai_file = genai.upload_file(path=f"{audio_file_name}")
     if not api_key or not genai_file:
