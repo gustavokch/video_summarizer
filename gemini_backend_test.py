@@ -26,7 +26,7 @@ async def summarize_audio_async(audio_file_name, sys_message):
     temperature = float(os.getenv('TEMPERATURE'))
     genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
     generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
-    system_prompt = gen_string(gemini_message_l)
+    system_prompt = gen_string(system_message_l)
     prompt = system_prompt
     print("Gemini System Prompt: " + prompt)
 
@@ -65,7 +65,7 @@ async def transcribe_audio_async(audio_file_name, transcription_file):
     if not api_key or not genai_file:
         raise ValueError("API key or file is missing for Gemini model.")
 
-    transcribe_prompt = "Generate a transcript of the speech."
+    transcribe_prompt = gen_string(gemini_message_l)
     print("Running Gemini Transcription")
 
     transcription = await asyncio.to_thread(transcribe_model.generate_content, [transcribe_prompt, genai_file])
