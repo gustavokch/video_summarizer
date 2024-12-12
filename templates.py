@@ -28,13 +28,15 @@ def gen_string(line_list):
         out_string = ("\n".join(str(n) for n in line_list) + "\n")
     return out_string
 
-with open("./gemini_instructions", "r") as f:
+def read_gemini_sysmsg():
     gemini_message_l = []
-    lines = f.readlines()
-    for line in lines:   
-        read_line = line
-        gemini_message_l.append(read_line)
-    print(str(gen_string(gemini_message_l)))
+    with open("./gemini_instructions", "r") as f:
+        gemini_message_l = []
+        lines = f.readlines()
+        for line in lines:   
+            read_line = line
+            gemini_message_l.append(read_line)
+        return str(gen_string(gemini_message_l))
         
 
 def generate_modelfile(model_name, model_family):
