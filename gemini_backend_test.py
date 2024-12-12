@@ -46,7 +46,7 @@ async def summarize_text_async(text_input, transcription_file):
     async with aiofiles.open(transcription_file, 'r') as f:
         prompt = await f.read()
 
-    model = genai.GenerativeModel(system_instruction=system_prompt, model_name='models/gemini-1.5-pro-latest')
+    model = genai.GenerativeModel(system_instruction=system_prompt, model_name='models/gemini-2.0-flash-exp')
     response = await asyncio.to_thread(model.generate_content, prompt, generation_config=generation_config)
 
     print(response.text)
@@ -59,7 +59,7 @@ async def transcribe_audio_async(audio_file_name, transcription_file):
     api_key = load_api_model()
     generation_config = genai.GenerationConfig(max_output_tokens=-1, temperature=temperature)
 
-    transcribe_model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    transcribe_model = genai.GenerativeModel(model_name="models/gemini-2.0-flash-exp")
     genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
 
     if not api_key or not genai_file:
