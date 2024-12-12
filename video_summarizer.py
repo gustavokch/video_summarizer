@@ -266,7 +266,7 @@ class VideoSummarizer:
                     api_key = load_api_model()
                     sys_message = gen_string(system_message_l)
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
-                    print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + " Transcription file: "+str(transcription_file))
+                    print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + " Transcription file=(transcription_file)")
                     transcription = asyncio.run(transcribe_audio_async(audio_file_name=audio_file_name, transcription_file=transcription_file))  # Awaiting coroutine
                     print(f"Summarizing audio file={audio_file_name} with model_name={model_name} and transcription_model={transcription_model}")
                     summary = asyncio.run(summarize_audio_async(audio_file_name=audio_file_name, sys_message=sys_message))  # Awaiting coroutine
@@ -279,7 +279,7 @@ class VideoSummarizer:
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     transcription = asyncio.run(transcribe_audio_async(audio_file_name=audio_file_name,transcription_file=transcription_file))
                     with open(transcription_file, 'r') as f_t:  
-                        transcription_text = str(f_t.read(transcription))
+                        transcription_text = f_t.read()
                     summary = self.summarize_text(input_text=transcription_text, model_name=model_name)
                     print(summary)
                   
