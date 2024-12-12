@@ -113,8 +113,12 @@ class VideoSummarizer:
                 output_file = os.path.splitext(input_file)[0] + '_16khz.wav'
             if sample_rate == 44100 and codec =='mp3':
                 output_file = os.path.splitext(input_file)[0] + '_44khz.mp3'
-        
-        command = [
+        if codec == 'mp3':
+            command = [
+            'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', '-ab', '128k', output_file
+        ]            
+        else:
+            command = [
             'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', output_file
         ]
         subprocess.run(command, check=True)
@@ -217,16 +221,14 @@ class VideoSummarizer:
                     api_key = load_api_model()
                     sys_message = gen_string(system_message_l)
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
-                    print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + " Transcription file: "+str(transcription_file))
-                    transcription = asyncio.run(transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file))  # Awaiting coroutine
+                    print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + " Transcription file=(transcription_file)")
+                    transcription = asyncio.run(transcribe_audio_async(audio_file_name=audio_file_name, transcription_file=transcription_file))  # Awaiting coroutine
                     print(f"Summarizing audio file={audio_file_name} with model_name={model_name} and transcription_model={transcription_model}")
-                    summary = asyncio.run(summarize_audio(sys_message=sys_message, audio_file_name=audio_file_name))  # Awaiting coroutine
+                    summary = asyncio.run(summarize_audio_async(audio_file_name=audio_file_name, sys_message=sys_message))  # Awaiting coroutine
                     print("Summary: " + summary)
                     summary_file = os.path.join(self.summary_dir, 'summary.txt')
                     with open(summary_file, "w") as s_f:
-                        s_f.write(summary)  # Write resolved string
-                    with open(transcription_file, 'w') as t_f: 
-                        t_f.write(transcription)  # Write resolved string                 
+                        s_f.write(summary)  # Write resolved string 
                 return transcription_file, summary           
 
         except Exception as e:
