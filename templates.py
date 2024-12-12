@@ -24,6 +24,7 @@ system_message_l = ["You are an advanced language model specialized in text summ
 "Produce a well-rounded and exhaustive summary that provides the reader with a deep understanding of the video content without the need to refer to the original transcript."]
 gemini_message_l = []
 def gen_string(line_list): 
+    out_string = ""
     for n in line_list:
         out_string = ("\n".join(str(n) for n in line_list) + "\n")
     return out_string
