@@ -3,7 +3,7 @@ import asyncio
 import aiofiles
 from dotenv import load_dotenv
 import google.generativeai as genai
-from templates import gen_string, system_message_l, gemini_message_l
+from templates import gen_string, system_message_l, read_gemini_sysmsg
 
 def load_api_model():
   if len(os.getenv('READ_API_KEY')) < 5:
@@ -63,7 +63,7 @@ async def transcribe_audio_async(audio_file_name, transcription_file):
 
     if not api_key or not genai_file:
         raise ValueError("API key or file is missing for Gemini model.")
-
+    gemini_message_l = read_gemini_sysmsg()
     transcribe_prompt = gen_string(gemini_message_l)
     prompt = transcribe_prompt
     print("Running Gemini Transcription")
