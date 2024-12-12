@@ -263,7 +263,7 @@ class VideoSummarizer:
                     transcription_file = os.path.join("/tmp/transcriptions", os.path.basename(audio_file) + '.txt')
                     with open(transcription_file, 'w') as f:  
                         print(f"Transcribing audio with model_name={model_name} and transcription_model={transcription_model}" + " Transcription file: "+str(transcription_file))
-                        transcription = str(transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file))  # Awaiting coroutine
+                        transcription = transcribe_audio(audio_file_name=audio_file_name, transcription_file=transcription_file)  # Awaiting coroutine
                         f.write(transcription)  # Write resolved string
                     summary_file = os.path.join(self.summary_dir, 'summary.txt')
                     with open(summary_file, "w") as f:
