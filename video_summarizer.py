@@ -252,6 +252,9 @@ class VideoSummarizer:
                         api_key = load_api_model()
                         sys_message = gen_string(system_message_l)
                         summary = summarize_text(text_input=transcription_text, transcription_file=transcription_file)
+                        summary_file = os.path.join(self.summary_dir, 'summary.txt')
+                        with open(summary_file, "w") as f:
+                            f.write(summary)
 
                 return transcription_file, summary
             
