@@ -58,7 +58,6 @@ async def transcribe_audio_async(audio_file_name, transcription_file):
     temperature = float(os.getenv('TEMPERATURE'))
     api_key = load_api_model()
     generation_config = genai.GenerationConfig(max_output_tokens=-1, temperature=temperature)
-
     transcribe_model = genai.GenerativeModel(model_name="models/gemini-2.0-flash-exp")
     genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
 
@@ -67,10 +66,8 @@ async def transcribe_audio_async(audio_file_name, transcription_file):
 
     transcribe_prompt = gen_string(gemini_message_l)
     print("Running Gemini Transcription")
-
+    print("Prompt: "+str(transcribe_prompt))
     transcription = await asyncio.to_thread(transcribe_model.generate_content, [transcribe_prompt, genai_file])
-
-    print(transcription.text)
 
     async with aiofiles.open(transcription_file, "w") as f:
         await f.write(transcription.text)
