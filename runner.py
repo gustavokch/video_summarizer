@@ -6,6 +6,7 @@ import glob
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from templates import gen_ollama_models
+from run import run_app
 
 # Function to start a script without stdout
 def run_script_no_stdout(script_name):
@@ -17,7 +18,9 @@ def run_script_no_stdout(script_name):
 
 # Function to start a script with stdout
 def run_script_with_stdout(script_name):
-    return subprocess.Popen(['python', script_name])
+	if script_name == "app.py":
+		return subprocess.Popen(['python', script_name, "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5555"])
+	return subprocess.Popen(['python', script_name])
 
 # Watchdog event handler to monitor changes in the cloudflared_url.txt file
 class FileChangeHandler(FileSystemEventHandler):
@@ -59,11 +62,11 @@ def main():
     p1 = run_script_no_stdout('ollama_server.py')  # No stdout for this script
     p2 = run_script_no_stdout('log_watchdog.py')  # No stdout for this script
     p3 = run_script_with_stdout('templates.py')  # With stdout for this script
-    p4 = run_script_no_stdout('cloudflared.py')
+#    p4 = run_script_no_stdout('cloudflared.py')
     p5 = run_script_with_stdout('app.py')
-    
+#    run_app()
     # Start the file watcher for cloudflared_url.txt
-    observer = start_file_watcher()
+#    observer = start_file_watcher()
 
     try:
         # Keep the main script running to handle processes and file monitoring
@@ -74,7 +77,7 @@ def main():
         p1.terminate()
         p2.terminate()
         p3.terminate()
-        p4.terminate()
+#        p4.terminate()
         p5.terminate()
         observer.stop()
         observer.join()
