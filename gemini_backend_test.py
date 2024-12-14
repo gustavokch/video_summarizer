@@ -3,17 +3,22 @@ import asyncio
 import aiofiles
 from dotenv import load_dotenv
 import google.generativeai as genai
-from templates import gen_string, system_message_l, read_gemini_sysmsg
+from templates import gen_string, system_message_l, read_gemini_sysmsg, GOOGLE_API_KEY
+api_key = str(GOOGLE_API_KEY[0])
 
 def load_api_model():
-  if len(os.getenv('READ_API_KEY')) < 5:
-      load_dotenv('./api_key')
-      api_key = str(os.getenv('GOOGLE_API_KEY'))
+  api_key = str(GOOGLE_API_KEY[0])
+  print(api_key)
+  if api_key == None:
+      with open("./api_key", 'r') as f:
+         api_key = f.readlines[1]
       genai.configure(api_key=api_key)
+      print("API Key: "+api_key)
       return api_key
   else:
-      api_key = str(os.getenv('READ_API_KEY'))
+      api_key = str(GOOGLE_API_KEY[0])
       genai.configure(api_key=api_key)
+      print("API Key: "+api_key)
       return api_key
   if api_key == "":
         print("No Google API key set.")
@@ -21,7 +26,7 @@ def load_api_model():
 
 
 async def summarize_audio_async(audio_file_name, sys_message):
-    load_api_model()
+    api_key = load_api_model()
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
     genai_file = await asyncio.to_thread(genai.upload_file, path=f"{audio_file_name}")
@@ -37,7 +42,7 @@ async def summarize_audio_async(audio_file_name, sys_message):
     return response.text
 
 async def summarize_text_async(text_input, transcription_file):
-    load_api_model()
+    api_key = load_api_model()
     load_dotenv('./env')
     temperature = float(os.getenv('TEMPERATURE'))
     generation_config = genai.GenerationConfig(max_output_tokens=8192, temperature=temperature)
@@ -83,3 +88,6 @@ def summarize_text(text_input, transcription_file):
 
 def transcribe_audio(audio_file_name, transcription_file):
     return asyncio.run(transcribe_audio_async(audio_file_name, transcription_file))
+
+if __name__ == "__main__":
+    load_api_model()

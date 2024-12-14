@@ -13,6 +13,8 @@ num_ctx = int(os.getenv('NUM_CTX'))
 num_predict = int(os.getenv('NUM_PREDICT'))
 test_cpu = int(os.getenv('TEST_CPU'))
 
+GOOGLE_API_KEY = ["AIzaSyD94hba_S_KdzJ68a_aOtzWDpbrK-G9FRw"]
+
 system_message_l = ["You are an advanced language model specialized in text summarization. Your task is to process transcribed audio and produce extensive and comprehensive summaries. Follow these guidelines:",
 "1. **Context Preservation:** Accurately capture the key points, nuances, and tone of the original content. Maintain the original intent and message of the speaker(s).",
 "2. **Clarity and Coherence:** Write the summary in a clear, structured, and logical format, ensuring it flows naturally and is easy to understand.",
@@ -89,6 +91,7 @@ if __name__ == '__main__':
 
     sys_message = gen_string(system_message_l)
     os.environ["SYSTEM_MESSAGE"] = sys_message
+    os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
     if os.path.isfile("./models.txt"):
         os.remove("./models.txt")
     models = ollama.list()
