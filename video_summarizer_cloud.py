@@ -58,7 +58,7 @@ class VideoSummarizer:
         if test_cpu == 1:
             os.environ["OMP_NUM_THREADS"] = "4"
             self.device = "cpu"
-            self.model_size = "openai/whisper-small"
+            self.model_size = "mobiuslabsgmbh/faster-whisper-large-v3-turbo"
                 # Run on CPU with INT8
             self.model = WhisperModel(self.model_size, device="cpu", compute_type="int8")
             self.batched_model = BatchedInferencePipeline(model=self.model)
@@ -78,7 +78,8 @@ class VideoSummarizer:
         """
         try:
             ydl_opts = {
-                'format': 'bestaudio/best',
+                'cookiefile': f'./cookies.txt',
+		'format': 'bestaudio/best',
                 'outtmpl': f'{self.download_dir}/%(title)s.%(ext)s',
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',

@@ -14,6 +14,7 @@ from gemini_backend_test import summarize_audio, load_api_model, transcribe_audi
 #from gemini_backend import summarize_audio, load_api_model, transcribe_audio, summarize_text
 from dotenv import load_dotenv
 from runner import clean_output_folders
+from huggingface_hub import snapshot_download
 
 class VideoSummarizer:
     """
@@ -59,7 +60,8 @@ class VideoSummarizer:
         if test_cpu == 1:
             os.environ["OMP_NUM_THREADS"] = "4"
             self.device = "cpu"
-            self.model_size = "openai/whisper-small"
+            self.model_size = "small"
+#            model_path = snapshot_download(self.model_size)
                 # Run on CPU with INT8
             self.model = WhisperModel(self.model_size, device="cpu", compute_type="int8")
             self.batched_model = BatchedInferencePipeline(model=self.model)
@@ -78,7 +80,9 @@ class VideoSummarizer:
             Exception: If audio download fails
         """
         try:
+
             ydl_opts = {
+		'cookiefile': 'cookies.txt',
                 'format': 'bestaudio/best',
                 'outtmpl': f'{self.download_dir}/%(title)s.%(ext)s',
                 'postprocessors': [{

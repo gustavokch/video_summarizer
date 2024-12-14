@@ -4,9 +4,10 @@ import aiofiles
 from dotenv import load_dotenv
 import google.generativeai as genai
 from templates import gen_string, system_message_l, read_gemini_sysmsg
+api_key = ""
 
 def load_api_model():
-  if len(os.getenv('READ_API_KEY')) < 5:
+  if api_key == "":
       load_dotenv('./api_key')
       api_key = str(os.getenv('GOOGLE_API_KEY'))
       genai.configure(api_key=api_key)
@@ -15,10 +16,6 @@ def load_api_model():
       api_key = str(os.getenv('READ_API_KEY'))
       genai.configure(api_key=api_key)
       return api_key
-  if api_key == "":
-        print("No Google API key set.")
-        return None
-
 
 async def summarize_audio_async(audio_file_name, sys_message):
     load_api_model()
