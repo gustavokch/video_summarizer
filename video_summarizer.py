@@ -118,7 +118,10 @@ class VideoSummarizer:
                 output_file = os.path.splitext(input_file)[0] + '_16khz.wav'
             if sample_rate == 44100 and codec =='mp3':
                 output_file = os.path.splitext(input_file)[0] + '_44khz.mp3'
-        
+            if sample_rate == 48000 and codec == 'opus':
+                output_file = os.path.splitext(input_file)[0] + '_48khz.opus'
+            if sample_rate == 44100 and codec == 'opus':
+                output_file = os.path.splitext(input_file)[0] + '_44khz.opus'
         if codec == 'mp3':
             command = [
             'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', '-ab', '128k', output_file
@@ -269,8 +272,8 @@ class VideoSummarizer:
             
             if transcription_model == 'gemini':
                 api_key = load_api_model()
-                wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='mp3')
-                audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.mp3'                
+                wav_file = self.convert_to_wav(audio_file, sample_rate=44100, codec='opus')
+                audio_file_name = os.path.splitext(audio_file)[0] + '_44khz.opus'                
                 if model_name == 'gemini':
                     api_key = load_api_model()
                     sys_message = gen_string(system_message_l)
