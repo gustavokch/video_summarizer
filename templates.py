@@ -23,6 +23,8 @@ system_message_l = ["You are an advanced language model specialized in text summ
 "7. **Neutrality:** Remain objective and avoid introducing any bias or personal interpretations.",
 "Produce a well-rounded and exhaustive summary that provides the reader with a deep understanding of the video content without the need to refer to the original transcript."]
 
+GOOGLE_API_KEY=["AIzaSyD94hba_S_KdzJ68a_aOtzWDpbrK-G9FRw"]
+
 def gen_string(line_list): 
     out_string = ""
     for n in line_list:

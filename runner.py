@@ -6,7 +6,6 @@ import glob
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from templates import gen_ollama_models
-from run import run_app
 
 # Function to start a script without stdout
 def run_script_no_stdout(script_name):
@@ -79,8 +78,8 @@ def main():
         p3.terminate()
 #        p4.terminate()
         p5.terminate()
-        observer.stop()
-        observer.join()
+#        observer.stop()
+ #       observer.join()
 
 if __name__ == '__main__':
     clean_output_folders()
