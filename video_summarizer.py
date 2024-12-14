@@ -123,7 +123,11 @@ class VideoSummarizer:
         if codec == 'mp3':
             command = [
             'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', '-ab', '128k', output_file
-        ]            
+        ]   
+        if codec == 'opus':
+            command = [
+            'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', '-ab', '128k', output_file
+        ]          
         else:
             command = [
             'ffmpeg', '-y', '-i', input_file, '-ar', f"{sample_rate}", '-ac', '1', output_file
